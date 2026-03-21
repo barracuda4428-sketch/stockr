@@ -22,10 +22,10 @@
 html,body{
 background:var(--bg);color:var(--chalk);
 font-family:'M PLUS 1',sans-serif;
-font-size:11px;
+font-size:10px;
 overflow:hidden;height:100%;
 }
-body{padding:12px;height:100%;display:flex;flex-direction:column}
+body{padding:8px;height:100%;display:flex;flex-direction:column}
 
 h1{font-size:22px;font-weight:900;color:#26b314;letter-spacing:.06em;margin-bottom:18px;text-align:center}
 
@@ -189,7 +189,7 @@ opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;box-sha
 <div class="toast" id="toast"></div>
 
 <script>
-var GAS_URL = 'https://script.google.com/macros/s/AKfycbxrovTrx5M5o5I6gXxcMT-T5ZXvIRqfT4LLP6AtfpzEaOIqugTYejF56UFMNFl0nuk3/exec';
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbxWHbu4M1HAirXnVA24fAhpg0RQaVLYSgo3gTtSxMVsfifIPA2sXjvBweiVSqYySZI/exec';
 var currentItem = null;
 var pendingOp = null;
 var isProcessing = false;
@@ -325,6 +325,10 @@ btn.textContent = pendingOp === 'USE' ? '確定（使用）' : '確定（補充�
 return;
 }
 showToast((pendingOp === 'USE' ? '使用 ' : '補充 ') + qty + ' 完了', 'ok');
+// 親タブ（GASアプリ）に再読み込みを通知
+if (window.opener) {
+window.opener.postMessage({ type: 'STOCK_UPDATED' }, '*');
+}
 // 完了後タブを閉じる
 setTimeout(function() { window.close(); }, 1200);
 })
