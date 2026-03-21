@@ -50,9 +50,10 @@ html5QrCode.stop();
 var msg = document.getElementById('msg');
 msg.textContent = '読み取り完了: ' + decodedText;
 msg.className = 'ok';
-// GASアプリにリダイレクト
+// sessionStorageに保存してからGASにリダイレクト（URLにitemIdを付けない）
+sessionStorage.setItem('QR_ITEM_ID', decodedText.trim());
 setTimeout(function() {
-window.location.href = GAS_URL + '?itemId=' + encodeURIComponent(decodedText.trim());
+window.location.href = GAS_URL;
 }, 600);
 },
 function() {}
