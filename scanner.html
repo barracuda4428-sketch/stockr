@@ -15,45 +15,51 @@ display:flex;flex-direction:column;align-items:center;
 justify-content:center;min-height:100vh;gap:24px;padding:20px;
 text-align:center;
 }
-h1{font-size:28px;font-weight:700;color:#ffd84d}
-p{font-size:22px;color:#b8b8b0}
-#msg{font-size:20px;color:#5ecb7a;margin-top:10px}
+h1{font-size:28px;font-weight:700;color:#ffd84d;letter-spacing:.06em}
+#reader{width:90vw;max-width:360px}
+#msg{font-size:22px;color:#b8b8b0;font-weight:500;min-height:32px}
+#msg.ok{color:#5ecb7a}
+#msg.err{color:#ff6b6b}
 .btn{
 padding:18px 40px;border-radius:100px;
 background:#4e4e4e;border:2px solid rgba(255,255,255,0.18);
 color:#e0e0d8;font-size:26px;font-weight:700;
-cursor:pointer;font-family:inherit;margin-top:10px;
+cursor:pointer;font-family:inherit;
 }
-#reader{width:90vw;max-width:360px}
 </style>
 </head>
 <body>
 <h1>QRスキャナー</h1>
 <div id="reader"></div>
-<div id="msg">ライブラリを読み込み中...</div>
-<button class="btn" onclick="window.close()">閉じる</button>
+<div id="msg">読み込み中...</div>
+<button class="btn" onclick="history.back()">戻る</button>
 
 <script>
-// ライブラリを動的に読み込む
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbz4GfAf0INdtpg5qvHsU504m2gwVgQtm28dUlmu3-MfC4UoT3B-vK4ug0StAF9tHchW/exec';
+
 var script = document.createElement('script');
 script.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
 script.onload = function() {
-document.getElementById('msg').textContent = 'カメラを起動中...';
+document.getElementById('msg').textContent = 'QRコードをカメラに向けてください';
 var html5QrCode = new Html5Qrcode('reader');
 html5QrCode.start(
 { facingMode: 'environment' },
 { fps: 10, qrbox: { width: 240, height: 240 } },
 function(decodedText) {
 html5QrCode.stop();
-document.getElementById('msg').textContent = '読み取り完了: ' + decodedText;
-if (window.opener) {
-window.opener.postMessage({ type: 'QR_SCANNED', itemId: decodedText.trim() }, '*');
-setTimeout(function() { window.close(); }, 800);
-}
+var msg = document.getElementById('msg');
+msg.textContent = '読み取り完了: ' + decodedText;
+msg.className = 'ok';
+// GASアプリにリダイレクト
+setTimeout(function() {
+window.location.href = GAS_URL + '?itemId=' + encodeURIComponent(decodedText.trim());
+}, 600);
 },
 function() {}
 ).catch(function(err) {
-document.getElementById('msg').textContent = 'カメラエラー: ' + err;
+var msg = document.getElementById('msg');
+msg.textContent = 'カメラエラー: ' + err;
+msg.className = 'err';
 });
 };
 script.onerror = function() {
