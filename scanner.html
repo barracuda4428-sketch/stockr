@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>QRスキャナー</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+background:#1a1a1a;color:#fff;
+font-family:'Helvetica Neue',sans-serif;
+display:flex;flex-direction:column;align-items:center;
+justify-content:center;min-height:100vh;gap:24px;padding:20px;
+text-align:center;
+}
+h1{font-size:28px;font-weight:700;color:#ffd84d}
+p{font-size:22px;color:#b8b8b0}
+#msg{font-size:20px;color:#5ecb7a;margin-top:10px}
+.btn{
+padding:18px 40px;border-radius:100px;
+background:#4e4e4e;border:2px solid rgba(255,255,255,0.18);
+color:#e0e0d8;font-size:26px;font-weight:700;
+cursor:pointer;font-family:inherit;margin-top:10px;
+}
+#reader{width:90vw;max-width:360px}
+</style>
+</head>
+<body>
+<h1>QRスキャナー</h1>
+<div id="reader"></div>
+<div id="msg">ライブラリを読み込み中...</div>
+<button class="btn" onclick="window.close()">閉じる</button>
+
+<script>
+// ライブラリを動的に読み込む
+var script = document.createElement('script');
+script.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
+script.onload = function() {
+document.getElementById('msg').textContent = 'カメラを起動中...';
+var html5QrCode = new Html5Qrcode('reader');
+html5QrCode.start(
+{ facingMode: 'environment' },
+{ fps: 10, qrbox: { width: 240, height: 240 } },
+function(decodedText) {
+html5QrCode.stop();
+document.getElementById('msg').textContent = '読み取り完了: ' + decodedText;
+if (window.opener) {
+window.opener.postMessage({ type: 'QR_SCANNED', itemId: decodedText.trim() }, '*');
+setTimeout(function() { window.close(); }, 800);
+}
+},
+function() {}
+).catch(function(err) {
+document.getElementById('msg').textContent = 'カメラエラー: ' + err;
+});
+};
+script.onerror = function() {
+document.getElementById('msg').textContent = 'ライブラリの読み込みに失敗しました';
+};
+document.head.appendChild(script);
+</script>
+
+</body>
+</html>
