@@ -301,6 +301,25 @@ var el = document.getElementById('qtyInput');
 el.value = Math.max(1, (parseInt(el.value) || 1) + d);
 }
 
+// touchstartで即反応・ダブルタップ拡大防止
+document.addEventListener('touchstart', function(e) {
+var btn = e.target.closest('.qty-btn');
+if (!btn) return;
+e.preventDefault();
+var d = btn.textContent === '＋' ? 1 : -1;
+chgQty(d);
+}, { passive: false });
+
+// ダブルタップによる拡大を全体で防止
+var lastTouchEnd = 0;
+document.addEventListener('touchend', function(e) {
+var now = Date.now();
+if (now - lastTouchEnd < 300) {
+e.preventDefault();
+}
+lastTouchEnd = now;
+}, { passive: false });
+
 function submitOp() {
 if (isProcessing) return;
 var qty = parseInt(document.getElementById('qtyInput').value) || 0;
