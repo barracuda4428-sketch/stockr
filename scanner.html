@@ -370,7 +370,21 @@ function rescan() {
 currentItem = null;
 pendingOp = null;
 showScreen('scanner');
-startScanner();
+// html5QrCodeが残っていれば完全にリセット
+if (html5QrCode) {
+try {
+html5QrCode.stop().catch(function(){}).finally(function() {
+html5QrCode.clear();
+html5QrCode = null;
+launchCamera();
+});
+} catch(e) {
+html5QrCode = null;
+launchCamera();
+}
+} else {
+launchCamera();
+}
 }
 
 function showToast(msg, type) {
