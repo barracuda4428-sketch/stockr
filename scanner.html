@@ -201,15 +201,40 @@ var currentItem = null;
 var pendingOp = null;
 var isProcessing = false;
 var html5QrCode = null;
+var allItems = []; // 起動時に全品目を先読み
+var allCategories = []; // 起動時に全カテゴリを先読み
 
 var script = document.createElement('script');
 script.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
-script.onload = startScanner;
+script.onload = function() {
+// ライブラリ読み込み完了後、品目データを先読みしてからカメラ起動
+preloadItems();
+};
 script.onerror = function() {
 document.getElementById('scanMsg').textContent = 'ライブラリの読み込みに失敗しました';
 document.getElementById('scanMsg').className = 'err';
 };
 document.head.appendChild(script);
+
+function preloadItems() {
+document.getElementById('scanMsg').textContent = 'データを読み込み中...';
+fetch(GAS_URL + '?action=getAll')
+.then(function(res) { return res.json(); })
+.then(function(data) {
+if (data.error) {
+document.getElementById('scanMsg').textContent = 'データ取得エラー: ' + data.error;
+document.getElementById('scanMsg').className = 'err';
+return;
+}
+allItems = data.items || [];
+allCategories = data.cats || [];
+startScanner();
+})
+.catch(function(err) {
+document.getElementById('scanMsg').textContent = '通信エラー: ' + err.message;
+document.getElementById('scanMsg').className = 'err';
+});
+}
 
 function showScreen(name) {
 document.getElementById('scannerArea').style.display = name === 'scanner' ? 'flex' : 'none';
@@ -250,18 +275,18 @@ document.getElementById('scanMsg').className = 'err';
 }
 
 function fetchItem(itemId) {
-document.getElementById('scanMsg').textContent = '品目を取得中...';
-fetch(GAS_URL + '?action=getItem&itemId=' + encodeURIComponent(itemId))
-.then(function(res) { return res.json(); })
-.then(function(data) {
-if (data.error) { showToast(data.error, 'err'); rescan(); return; }
-currentItem = data.item;
-showItemScreen();
-})
-.catch(function(err) {
-showToast('通信エラー: ' + err.message, 'err');
+// ローカルデータから検索（通信なし・即座に表示）
+var item = allItems.find(function(i) { return i['品目ID'] === itemId; });
+if (!item) {
+showToast('品目が見つかりません: ' + itemId, 'err');
 rescan();
-});
+return;
+}
+// カテゴリ名を解決
+var cat = allCategories.find(function(c) { return c.id === item['カテゴリID']; });
+item['カテゴリ名'] = cat ? cat.name : item['カテゴリID'];
+currentItem = item;
+showItemScreen();
 }
 
 function showItemScreen() {
