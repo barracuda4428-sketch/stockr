@@ -75,10 +75,10 @@ z-index:9999;
 border-radius:16px;padding:20px 36px;
 font-size:28px;font-weight:900;
 opacity:0;transition:opacity .25s;pointer-events:none;
-white-space:nowrap;box-shadow:var(--shadow);text-align:center;
+white-space:nowrap;box-shadow:var(–shadow);text-align:center;
 }
-.toast.ok{background:var(--green);color:var(--bg)}
-.toast.err{background:var(--red);color:var(--chalk)}
+.toast.ok{background:var(–green);color:var(–bg)}
+.toast.err{background:var(–red);color:var(–chalk)}
 .toast.show{opacity:1}
 </style>
 
@@ -104,6 +104,7 @@ white-space:nowrap;box-shadow:var(--shadow);text-align:center;
 <button class="action-btn btn-use" onclick="showQty('USE')"><span class="btn-icon">📤</span>使　用</button>
 <button class="action-btn btn-stock" onclick="showQty('STOCK')"><span class="btn-icon">📥</span>補　充</button>
 </div>
+<button class="btn-secondary" onclick="rescan()">📷 別のQRを読み込む</button>
 <button class="btn-close-red" onclick="window.close()">閉じる</button>
 </div>
 
