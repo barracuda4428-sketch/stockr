@@ -232,11 +232,12 @@ function submitOp() {
 if (isProcessing) return;
 var qty = parseInt(document.getElementById('qtyInput').value) || 0;
 if (qty < 1) { showToast('数量を入力してください', 'err'); return; }
+var name = document.getElementById('opOperator').value.trim();
+if (!name) { showToast('作業者名を入力してください', 'err'); return; } // ★ 必須チェック
+localStorage.setItem('operator_name', name); // ★ 常に保存
 isProcessing = true;
 var btn = document.getElementById('confirmBtn');
 btn.disabled = true; btn.textContent = '処理中...';
-var name = document.getElementById('opOperator').value;
-if (name) localStorage.setItem('operator_name', name);
 var op = { id: currentItem['品目ID'], type: pendingOp === 'USE' ? 'OUT' : 'IN', qty: qty, operator: name, memo: document.getElementById('opMemo').value };
 fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'stockOperation', op: op }) })
 .then(function(res) { return res.json(); })
