@@ -202,7 +202,7 @@ btn.textContent = isUse ? '確定（使用）' : '確定（補充）';
 btn.disabled = false;
 document.getElementById('qtyInput').value = '1';
 document.getElementById('opMemo').value = '';
-var saved = localStorage.getItem('operator_name');
+var saved = loadName();
 if (saved) document.getElementById('opOperator').value = saved;
 showScreen('qty');
 }
@@ -228,13 +228,25 @@ if (now - lastTouchEnd < 300) { e.preventDefault(); }
 lastTouchEnd = now;
 }, { passive: false });
 
+// ── 名前の保存・読み込み（localStorage + Cookie 併用）──
+function saveName(name){
+try{localStorage.setItem('operator_name',name);}catch(e){}
+var d=new Date();d.setFullYear(d.getFullYear()+1);
+document.cookie='operator_name='+encodeURIComponent(name)+';expires='+d.toUTCString()+';path=/';
+}
+function loadName(){
+try{var n=localStorage.getItem('operator_name');if(n)return n;}catch(e){}
+var m=document.cookie.match(/(?:^|;\s*)operator_name=([^;]*)/);
+return m?decodeURIComponent(m[1]):'';
+}
+
 function submitOp() {
 if (isProcessing) return;
 var qty = parseInt(document.getElementById('qtyInput').value) || 0;
 if (qty < 1) { showToast('数量を入力してください', 'err'); return; }
 var name = document.getElementById('opOperator').value.trim();
-if (!name) { showToast('作業者名を入力してください', 'err'); return; } // ★ 必須チェック
-localStorage.setItem('operator_name', name); // ★ 常に保存
+if (!name) { showToast('作業者名を入力してください', 'err'); return; }
+saveName(name); // ★ localStorage + Cookie 両方に保存
 isProcessing = true;
 var btn = document.getElementById('confirmBtn');
 btn.disabled = true; btn.textContent = '処理中...';
@@ -270,6 +282,14 @@ el.textContent = (type === 'ok' ? '✓ ' : '⚠ ') + msg;
 el.className = 'toast ' + type + ' show';
 setTimeout(function() { el.classList.remove('show'); }, 2800);
 }
+
+// ★ index.htmlからの名前リクエストに応答
+window.addEventListener('message', function(e) {
+if (e.data && e.data.type === 'GET_OPERATOR_NAME') {
+var name = localStorage.getItem('operator_name') || '';
+e.source.postMessage({ type: 'OPERATOR_NAME', name: name }, '*');
+}
+});
 </script>
 
 </body>
