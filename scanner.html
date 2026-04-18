@@ -135,6 +135,12 @@ white-space:nowrap;box-shadow:var(–shadow);text-align:center;
 var GAS_URL = 'https://script.google.com/macros/s/AKfycbxrovTrx5M5o5I6gXxcMT-T5ZXvIRqfT4LLP6AtfpzEaOIqugTYejF56UFMNFl0nuk3/exec';
 var currentItem = null, pendingOp = null, isProcessing = false, html5QrCode = null;
 
+// ★ 起動時にopener（index.html）へ名前を送信
+if (window.opener) {
+var _savedName = localStorage.getItem('operator_name') || '';
+window.opener.postMessage({ type: 'OPERATOR_NAME', name: _savedName }, '*');
+}
+
 var script = document.createElement('script');
 script.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
 script.onload = startScanner;
