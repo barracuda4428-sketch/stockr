@@ -197,13 +197,8 @@ function loadLang(){try{return localStorage.getItem('sl_lang')||'ja';}catch(e){r
 function saveName(n){try{localStorage.setItem('operator_name',n);}catch(e){}}
 function loadName(){try{return localStorage.getItem('operator_name')||'';}catch(e){return '';}}
 
-// ── 閉じる（★ window.close + history.back 併用）──
 function doClose(){
-try{window.close();}catch(e){}
-// window.closeが効かない場合はhistory.backで対応
-setTimeout(function(){
-try{history.back();}catch(e){}
-},100);
+window.close();
 }
 
 // ── 言語選択 ──
@@ -424,12 +419,22 @@ showToast(t.toastErr+': '+err.message,'err');
 function rescan(){
 currentItem=null;
 showScreen('scanner');
-if(html5QrCode){
-html5QrCode.stop().catch(function(){}).finally(function(){
-html5QrCode.clear();
+// ★ まずscanMsgを即座にリセット
+document.getElementById('scanMsg').textContent=LANG[currentLang].scanMsg;
+document.getElementById('scanMsg').className='';
+// ★ 既存インスタンスを破棄してから新規起動
+var old=html5QrCode;
 html5QrCode=null;
+if(old){
+try{
+old.stop().catch(function(){}).finally(function(){
+try{old.clear();}catch(e){}
 launchCamera();
 });
+}catch(e){
+try{old.clear();}catch(e2){}
+launchCamera();
+}
 } else {
 launchCamera();
 }
