@@ -94,7 +94,7 @@ html,body{background:var(--bg);color:var(--chalk);font-family:'M PLUS 1',sans-se
 <div id="scannerArea">
 <div id="reader"></div>
 <div id="scanMsg">読み込み中...</div>
-<button class="btn-close-red" onclick="doClose()">閉じる</button>
+<button class="btn-close-red" onclick="window.close()">閉じる</button>
 </div>
 
 <div id="itemArea">
@@ -115,7 +115,7 @@ html,body{background:var(--bg);color:var(--chalk);font-family:'M PLUS 1',sans-se
 </button>
 </div>
 <button class="btn-secondary" onclick="rescan()">📷 <span id="lblRescan">別のQRを読み込む</span></button>
-<button class="btn-close-red" onclick="doClose()"><span id="lblClose2">閉じる</span></button>
+<button class="btn-close-red" onclick="window.close()"><span id="lblClose2">閉じる</span></button>
 </div>
 
 <div id="qtyArea">
@@ -142,7 +142,7 @@ html,body{background:var(--bg);color:var(--chalk);font-family:'M PLUS 1',sans-se
 </div>
 <button id="confirmBtn" class="btn-primary btn-confirm-use" onclick="submitOp()"></button>
 <button class="btn-secondary" onclick="backToItem()">← <span id="lblBack">戻る</span></button>
-<button class="btn-close-red" onclick="doClose()"><span id="lblClose3">閉じる</span></button>
+<button class="btn-close-red" onclick="window.close()"><span id="lblClose3">閉じる</span></button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -226,7 +226,6 @@ document.getElementById('lblCancel').textContent=t.cancelBtn;
 document.getElementById('lblRescan').textContent=t.rescan;
 document.getElementById('lblClose2').textContent=t.close;
 document.getElementById('lblClose3').textContent=t.close;
-document.querySelector('#scannerArea .btn-close-red').textContent=t.close;
 document.getElementById('qtyHeader').textContent=t.qtyHeader;
 document.getElementById('lblQty').textContent=t.qtyLabel;
 document.getElementById('lblOperator').textContent=t.operator;
@@ -362,7 +361,7 @@ var qty=parseInt(document.getElementById('qtyInput').value)||0;
 if(qty<1){showToast(t.toastQty,'err');return;}
 var name=document.getElementById('opOperator').value.trim();
 if(!name){showToast(t.toastName,'err');return;}
-saveName(name); // ★ 確定時に保存
+saveName(name);
 isProcessing=true;
 var btn=document.getElementById('confirmBtn');
 btn.disabled=true;btn.textContent=t.processing;
@@ -370,39 +369,32 @@ var op={id:currentItem['品目ID'],type:'OUT',qty:qty,operator:name,memo:documen
 fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'stockOperation',op:op})})
 .then(function(res){return res.json();})
 .then(function(data){
-isProcessing=false;
+isProcessing=false; // ★ 必ずリセット
 if(data.error){showToast(data.error,'err');btn.disabled=false;btn.textContent=t.confirm;return;}
-// ★ 直前の操作を記憶
 lastOp={itemId:op.id,itemName:currentItem['品目名'],qty:qty,operator:name};
 showToast(t.toastOk+qty+t.toastDone,'ok');
-setTimeout(function(){
-showItemScreen(); // ★ 品目画面に戻る（取り消しボタンがアクティブな状態）
-},2000);
+setTimeout(function(){showItemScreen();},2000);
 })
 .catch(function(err){
-isProcessing=false;
+isProcessing=false; // ★ 必ずリセット
 btn.disabled=false;btn.textContent=t.confirm;
 showToast(t.toastErr+': '+err.message,'err');
 });
 }
 
-// ★ 取り消し操作
 function cancelOp(){
 var btn=document.getElementById('btnCancelOp');
 if(btn.classList.contains('disabled')||!lastOp||isProcessing)return;
 var t=LANG[currentLang];
 isProcessing=true;
 var op={
-id:lastOp.itemId,
-type:'IN', // 逆方向で取り消し
-qty:lastOp.qty,
-operator:lastOp.operator,
+id:lastOp.itemId,type:'IN',qty:lastOp.qty,operator:lastOp.operator,
 memo:'【取り消し】'+lastOp.itemName+' '+lastOp.qty+'個'
 };
 fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'stockOperation',op:op})})
 .then(function(res){return res.json();})
 .then(function(data){
-isProcessing=false;
+isProcessing=false; // ★ 必ずリセット
 if(data.error){showToast(data.error,'err');return;}
 lastOp=null;
 updateCancelBtn();
@@ -410,7 +402,7 @@ showToast(t.toastCancel,'ok');
 setTimeout(function(){rescan();},2000);
 })
 .catch(function(err){
-isProcessing=false;
+isProcessing=false; // ★ 必ずリセット
 showToast(t.toastErr+': '+err.message,'err');
 });
 }
