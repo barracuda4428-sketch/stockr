@@ -19,52 +19,22 @@
 --r:14px;--r-sm:10px;--shadow:0 3px 14px rgba(0,0,0,.30);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{
-background:var(--bg);color:var(--chalk);
-font-family:'M PLUS 1',sans-serif;
-font-size:16px;height:100%;padding:10px;
-display:flex;flex-direction:column;overflow:hidden;
--webkit-text-size-adjust:100%;
-}
-
-/* ヘッダー */
-.app-header{
-text-align:center;padding:8px 0 10px;flex-shrink:0;
-font-size:18px;font-weight:900;color:#26b314;letter-spacing:.06em;
-border-bottom:2px solid var(--border);margin-bottom:10px;
-display:flex;align-items:center;justify-content:space-between;
-}
+html,body{background:var(--bg);color:var(--chalk);font-family:'M PLUS 1',sans-serif;font-size:16px;height:100%;padding:10px;display:flex;flex-direction:column;overflow:hidden;-webkit-text-size-adjust:100%;}
+.app-header{text-align:center;padding:8px 0 10px;flex-shrink:0;font-size:18px;font-weight:900;color:#26b314;letter-spacing:.06em;border-bottom:2px solid var(--border);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
 .app-header .title{flex:1;text-align:center}
 .app-header span{font-size:12px;color:var(--chalk3);font-weight:500;display:block}
-.lang-btn{
-background:var(--surface);border:2px solid var(--border);
-border-radius:var(--r-sm);padding:4px 10px;
-font-size:20px;cursor:pointer;flex-shrink:0;
-}
+.lang-btn{background:var(--surface);border:2px solid var(--border);border-radius:var(--r-sm);padding:4px 10px;font-size:20px;cursor:pointer;flex-shrink:0;}
 .lang-btn:active{background:var(--card)}
-
-/* 言語選択画面 */
 #langArea{display:none;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:14px;}
 .lang-select-title{font-size:20px;font-weight:900;color:var(--chalk3);margin-bottom:8px;text-align:center}
-.lang-option{
-width:90%;max-width:320px;padding:18px;
-border-radius:var(--r);border:2px solid var(--border);
-background:var(--card);cursor:pointer;
-display:flex;align-items:center;gap:16px;
-font-size:22px;font-weight:900;color:var(--chalk);
-transition:all .15s;box-shadow:var(--shadow);
-}
+.lang-option{width:90%;max-width:320px;padding:18px;border-radius:var(--r);border:2px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;gap:16px;font-size:22px;font-weight:900;color:var(--chalk);transition:all .15s;box-shadow:var(--shadow);}
 .lang-option:active{opacity:.8;transform:scale(.97)}
 .lang-flag{font-size:32px}
-
-/* スキャナー */
 #scannerArea{display:flex;flex-direction:column;align-items:center;gap:10px;flex:1;justify-content:center;overflow:hidden}
 #reader{width:90vw;max-width:500px;border-radius:var(--r);overflow:hidden}
 #scanMsg{font-size:16px;color:var(--chalk3);font-weight:500;text-align:center}
 #scanMsg.ok{color:var(--green)}
 #scanMsg.err{color:var(--red)}
-
-/* 品目・操作画面 */
 #itemArea{display:none;overflow-y:auto;flex:1}
 #qtyArea{display:none;overflow-y:auto;flex:1}
 .item-card{background:var(--card);border-radius:var(--r);padding:10px 14px;border:2px solid var(--border);margin-bottom:8px;box-shadow:var(--shadow)}
@@ -77,23 +47,13 @@ transition:all .15s;box-shadow:var(--shadow);
 .stock-box.danger .stock-big{color:var(--red)}
 .stock-box.warn .stock-big{color:var(--yellow)}
 .stock-lbl{font-size:12px;color:var(--chalk3);margin-top:4px;font-weight:700}
-
-/* ★ アクションボタン（使用・取り消し） */
 .action-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
 .action-btn{border-radius:var(--r);padding:16px 8px;font-family:inherit;font-size:20px;font-weight:900;cursor:pointer;border:2px solid;display:flex;flex-direction:column;align-items:center;gap:6px;transition:opacity .15s}
 .action-btn:active{opacity:.8}
 .action-btn .btn-icon{font-size:28px;line-height:1}
 .btn-use{background:var(--green-lt);border-color:var(--green);color:var(--green)}
 .btn-cancel-op{background:var(--red-lt);border-color:var(--red);color:var(--red)}
-/* ★ グレーアウト（操作前） */
-.btn-cancel-op.disabled{
-background:rgba(255,255,255,0.05);
-border-color:rgba(255,255,255,0.15);
-color:var(--chalk3);
-cursor:not-allowed;
-opacity:0.5;
-}
-
+.btn-cancel-op.disabled{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.15);color:var(--chalk3);cursor:not-allowed;opacity:0.5;}
 .qty-header{font-size:18px;font-weight:900;color:var(--yellow);margin-bottom:8px;text-align:center}
 .qty-section{background:var(--card);border-radius:var(--r);padding:10px;border:2px solid var(--border);margin-bottom:8px;text-align:center}
 .qty-label{font-size:13px;color:var(--chalk2);font-weight:900;margin-bottom:8px;letter-spacing:.06em}
@@ -110,56 +70,32 @@ opacity:0.5;
 .btn-confirm-use{background:var(--green);color:var(--bg)}
 .btn-secondary{width:100%;padding:10px;border-radius:var(--r-sm);margin-top:6px;background:transparent;border:2px solid var(--border);color:var(--chalk2);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
 .btn-close-red{width:100%;padding:10px;border-radius:var(--r-sm);margin-top:6px;background:transparent;border:2px solid rgba(255,107,107,.4);color:var(--red);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
-.toast{
-position:fixed;top:50%;left:50%;
-transform:translate(-50%,-50%);
-z-index:9999;
-border-radius:16px;padding:20px 36px;
-font-size:28px;font-weight:900;
-opacity:0;transition:opacity .25s;pointer-events:none;
-white-space:nowrap;box-shadow:var(--shadow);text-align:center;
-}
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;border-radius:16px;padding:20px 36px;font-size:28px;font-weight:900;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow);text-align:center;}
 .toast.ok{background:var(--green);color:var(--bg)}
 .toast.err{background:var(--red);color:var(--chalk)}
 .toast.show{opacity:1}
 </style>
-
 </head>
 <body>
 
 <div class="app-header">
-<button class="lang-btn" id="langToggle" onclick="showLang()">🌐</button>
-<div class="title">
-QRスキャナーLite
-<span>TSUTSUISTOCKR</span>
-</div>
+<button class="lang-btn" onclick="showLang()">🌐</button>
+<div class="title">QRスキャナーLite<span>TSUTSUISTOCKR</span></div>
 <div style="width:44px"></div>
 </div>
 
-<!-- 言語選択画面 -->
-
 <div id="langArea">
 <div class="lang-select-title">言語を選択 / Chọn ngôn ngữ / Pilih bahasa</div>
-<div class="lang-option" onclick="setLang('ja')">
-<span class="lang-flag">🇯🇵</span>日本語
+<div class="lang-option" onclick="setLang('ja')"><span class="lang-flag">🇯🇵</span>日本語</div>
+<div class="lang-option" onclick="setLang('vi')"><span class="lang-flag">🇻🇳</span>Tiếng Việt</div>
+<div class="lang-option" onclick="setLang('id')"><span class="lang-flag">🇮🇩</span>Bahasa Indonesia</div>
 </div>
-<div class="lang-option" onclick="setLang('vi')">
-<span class="lang-flag">🇻🇳</span>Tiếng Việt
-</div>
-<div class="lang-option" onclick="setLang('id')">
-<span class="lang-flag">🇮🇩</span>Bahasa Indonesia
-</div>
-</div>
-
-<!-- スキャナー画面 -->
 
 <div id="scannerArea">
 <div id="reader"></div>
 <div id="scanMsg">読み込み中...</div>
-<button class="btn-close-red" id="btnClose1" onclick="window.close()">閉じる</button>
+<button class="btn-close-red" onclick="doClose()">閉じる</button>
 </div>
-
-<!-- 品目詳細画面 -->
 
 <div id="itemArea">
 <div class="item-card">
@@ -171,20 +107,16 @@ QRスキャナーLite
 <div class="stock-lbl" id="stockLbl"></div>
 </div>
 <div class="action-btns">
-<button class="action-btn btn-use" id="btnUse" onclick="showQty()">
-<span class="btn-icon">📤</span>
-<span id="lblUse">使　用</span>
+<button class="action-btn btn-use" onclick="showQty()">
+<span class="btn-icon">📤</span><span id="lblUse">使　用</span>
 </button>
 <button class="action-btn btn-cancel-op disabled" id="btnCancelOp" onclick="cancelOp()">
-<span class="btn-icon">🔄</span>
-<span id="lblCancel">取り消し</span>
+<span class="btn-icon">🔄</span><span id="lblCancel">取り消し</span>
 </button>
 </div>
-<button class="btn-secondary" id="btnRescan" onclick="rescan()">📷 <span id="lblRescan">別のQRを読み込む</span></button>
-<button class="btn-close-red" id="btnClose2" onclick="window.close()"><span id="lblClose2">閉じる</span></button>
+<button class="btn-secondary" onclick="rescan()">📷 <span id="lblRescan">別のQRを読み込む</span></button>
+<button class="btn-close-red" onclick="doClose()"><span id="lblClose2">閉じる</span></button>
 </div>
-
-<!-- 使用モーダル画面 -->
 
 <div id="qtyArea">
 <div class="qty-header" id="qtyHeader"></div>
@@ -209,354 +141,310 @@ QRスキャナーLite
 <input id="opMemo" type="text" placeholder="">
 </div>
 <button id="confirmBtn" class="btn-primary btn-confirm-use" onclick="submitOp()"></button>
-<button class="btn-secondary" id="btnBack" onclick="backToItem()">← <span id="lblBack">戻る</span></button>
-<button class="btn-close-red" id="btnClose3" onclick="window.close()"><span id="lblClose3">閉じる</span></button>
+<button class="btn-secondary" onclick="backToItem()">← <span id="lblBack">戻る</span></button>
+<button class="btn-close-red" onclick="doClose()"><span id="lblClose3">閉じる</span></button>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-var GAS_URL = 'https://script.google.com/macros/s/AKfycbxrovTrx5M5o5I6gXxcMT-T5ZXvIRqfT4LLP6AtfpzEaOIqugTYejF56UFMNFl0nuk3/exec';
-var currentItem = null, isProcessing = false, html5QrCode = null;
-var lastOp = null; // ★ 直前の操作を記憶
+var GAS_URL='https://script.google.com/macros/s/AKfycbxrovTrx5M5o5I6gXxcMT-T5ZXvIRqfT4LLP6AtfpzEaOIqugTYejF56UFMNFl0nuk3/exec';
+var currentItem=null,isProcessing=false,html5QrCode=null;
+var lastOp=null;
+var currentScreen='scanner'; // ★ 現在の画面を追跡
 
 // ── 多言語テキスト ──
-var LANG = {
-ja: {
-scanMsg: 'QRコードをカメラに向けてください',
-fetching: '品目を取得中...',
-useBtn: '使　用',
-cancelBtn: '取り消し',
-rescan: '📷 別のQRを読み込む',
-close: '閉じる',
-qtyHeader: '📤 使用（出庫）',
-qtyLabel: '数　量',
-operator: '作業者',
-operatorPlaceholder: '氏名を入力',
-memo: 'メモ（任意）',
-memoPh: '',
-confirm: '確定（使用）',
-back: '戻る',
-stockLbl: '現在庫（最低在庫: ',
-toastOk: '使用 ',
-toastDone: ' 完了',
-toastCancel: '取り消し 完了',
-toastNoOp: '取り消せる操作がありません',
-toastQty: '数量を入力してください',
-toastName: '作業者名を入力してください',
-toastErr: '通信エラー',
-processing: '処理中...',
+var LANG={
+ja:{
+scanMsg:'QRコードをカメラに向けてください',fetching:'品目を取得中...',
+useBtn:'使　用',cancelBtn:'取り消し',rescan:'📷 別のQRを読み込む',close:'閉じる',
+qtyHeader:'📤 使用（出庫）',qtyLabel:'数　量',
+operator:'作業者',operatorPh:'氏名を入力',memo:'メモ（任意）',memoPh:'',
+confirm:'確定（使用）',back:'戻る',
+stockLbl:'現在庫（最低在庫: ',
+toastOk:'使用 ',toastDone:' 完了',toastCancel:'取り消し 完了',
+toastQty:'数量を入力してください',toastName:'作業者名を入力してください',
+toastErr:'通信エラー',processing:'処理中...',
 },
-vi: {
-scanMsg: 'Hướng camera vào mã QR',
-fetching: 'Đang tải thông tin...',
-useBtn: 'Sử dụng',
-cancelBtn: 'Hoàn tác',
-rescan: '📷 Quét mã QR khác',
-close: 'Đóng',
-qtyHeader: '📤 Sử dụng (Xuất kho)',
-qtyLabel: 'Số lượng',
-operator: 'Người thực hiện',
-operatorPlaceholder: 'Nhập tên',
-memo: 'Ghi chú (tùy chọn)',
-memoPh: '',
-confirm: 'Xác nhận (Sử dụng)',
-back: 'Quay lại',
-stockLbl: 'Tồn kho hiện tại (Tối thiểu: ',
-toastOk: 'Sử dụng ',
-toastDone: ' hoàn thành',
-toastCancel: 'Hoàn tác thành công',
-toastNoOp: 'Không có thao tác để hoàn tác',
-toastQty: 'Vui lòng nhập số lượng',
-toastName: 'Vui lòng nhập tên',
-toastErr: 'Lỗi kết nối',
-processing: 'Đang xử lý...',
+vi:{
+scanMsg:'Hướng camera vào mã QR',fetching:'Đang tải thông tin...',
+useBtn:'Sử dụng',cancelBtn:'Hoàn tác',rescan:'📷 Quét mã QR khác',close:'Đóng',
+qtyHeader:'📤 Sử dụng (Xuất kho)',qtyLabel:'Số lượng',
+operator:'Người thực hiện',operatorPh:'Nhập tên',memo:'Ghi chú (tùy chọn)',memoPh:'',
+confirm:'Xác nhận (Sử dụng)',back:'Quay lại',
+stockLbl:'Tồn kho hiện tại (Tối thiểu: ',
+toastOk:'Sử dụng ',toastDone:' hoàn thành',toastCancel:'Hoàn tác thành công',
+toastQty:'Vui lòng nhập số lượng',toastName:'Vui lòng nhập tên',
+toastErr:'Lỗi kết nối',processing:'Đang xử lý...',
 },
-id: {
-scanMsg: 'Arahkan kamera ke kode QR',
-fetching: 'Memuat informasi...',
-useBtn: 'Digunakan',
-cancelBtn: 'Batalkan',
-rescan: '📷 Pindai QR lain',
-close: 'Tutup',
-qtyHeader: '📤 Digunakan (Keluar)',
-qtyLabel: 'Jumlah',
-operator: 'Pekerja',
-operatorPlaceholder: 'Masukkan nama',
-memo: 'Catatan (opsional)',
-memoPh: '',
-confirm: 'Konfirmasi (Digunakan)',
-back: 'Kembali',
-stockLbl: 'Stok saat ini (Minimum: ',
-toastOk: 'Digunakan ',
-toastDone: ' selesai',
-toastCancel: 'Pembatalan berhasil',
-toastNoOp: 'Tidak ada operasi yang dapat dibatalkan',
-toastQty: 'Masukkan jumlah',
-toastName: 'Masukkan nama',
-toastErr: 'Kesalahan koneksi',
-processing: 'Memproses...',
-}
-};
+id:{
+scanMsg:'Arahkan kamera ke kode QR',fetching:'Memuat informasi...',
+useBtn:'Digunakan',cancelBtn:'Batalkan',rescan:'📷 Pindai QR lain',close:'Tutup',
+qtyHeader:'📤 Digunakan (Keluar)',qtyLabel:'Jumlah',
+operator:'Pekerja',operatorPh:'Masukkan nama',memo:'Catatan (opsional)',memoPh:'',
+confirm:'Konfirmasi (Digunakan)',back:'Kembali',
+stockLbl:'Stok saat ini (Minimum: ',
+toastOk:'Digunakan ',toastDone:' selesai',toastCancel:'Pembatalan berhasil',
+toastQty:'Masukkan jumlah',toastName:'Masukkan nama',
+toastErr:'Kesalahan koneksi',processing:'Memproses...',
+}};
 
-var currentLang = 'ja';
+var currentLang='ja';
 
-// ── 言語の保存・読み込み ──
-function saveLang(lang) {
-try { localStorage.setItem('scanner_lite_lang', lang); } catch(e) {}
-}
-function loadLang() {
-try { return localStorage.getItem('scanner_lite_lang') || 'ja'; } catch(e) { return 'ja'; }
+// ── localStorage ──
+function saveLang(l){try{localStorage.setItem('sl_lang',l);}catch(e){}}
+function loadLang(){try{return localStorage.getItem('sl_lang')||'ja';}catch(e){return 'ja';}}
+function saveName(n){try{localStorage.setItem('operator_name',n);}catch(e){}}
+function loadName(){try{return localStorage.getItem('operator_name')||'';}catch(e){return '';}}
+
+// ── 閉じる（★ window.close + history.back 併用）──
+function doClose(){
+try{window.close();}catch(e){}
+// window.closeが効かない場合はhistory.backで対応
+setTimeout(function(){
+try{history.back();}catch(e){}
+},100);
 }
 
-// ── 名前の保存・読み込み ──
-function saveName(name) {
-try { localStorage.setItem('operator_name', name); } catch(e) {}
-}
-function loadName() {
-try { return localStorage.getItem('operator_name') || ''; } catch(e) { return ''; }
+// ── 言語選択 ──
+function showLang(){
+// ★ 言語選択前の画面を記憶
+document.getElementById('langArea').style.display='flex';
+document.getElementById('scannerArea').style.display='none';
+document.getElementById('itemArea').style.display='none';
+document.getElementById('qtyArea').style.display='none';
 }
 
-// ── 言語設定 ──
-function setLang(lang) {
-currentLang = lang;
+function setLang(lang){
+currentLang=lang;
 saveLang(lang);
 applyLang();
-showScreen('scanner');
+// ★ 元いた画面に戻る
+showScreen(currentScreen);
 }
 
-function applyLang() {
-var t = LANG[currentLang];
-document.getElementById('scanMsg').textContent = t.scanMsg;
-document.getElementById('lblUse').textContent = t.useBtn;
-document.getElementById('lblCancel').textContent = t.cancelBtn;
-document.getElementById('lblRescan').textContent = t.rescan;
-document.getElementById('lblClose2').textContent = t.close;
-document.getElementById('lblClose3').textContent = t.close;
-document.getElementById('btnClose1').textContent = t.close;
-document.getElementById('qtyHeader').textContent = t.qtyHeader;
-document.getElementById('lblQty').textContent = t.qtyLabel;
-document.getElementById('lblOperator').textContent = t.operator;
-document.getElementById('opOperator').placeholder = t.operatorPlaceholder;
-document.getElementById('lblMemo').textContent = t.memo;
-document.getElementById('opMemo').placeholder = t.memoPh;
-document.getElementById('confirmBtn').textContent = t.confirm;
-document.getElementById('lblBack').textContent = t.back;
+function applyLang(){
+var t=LANG[currentLang];
+document.getElementById('scanMsg').textContent=t.scanMsg;
+document.getElementById('lblUse').textContent=t.useBtn;
+document.getElementById('lblCancel').textContent=t.cancelBtn;
+document.getElementById('lblRescan').textContent=t.rescan;
+document.getElementById('lblClose2').textContent=t.close;
+document.getElementById('lblClose3').textContent=t.close;
+document.querySelector('#scannerArea .btn-close-red').textContent=t.close;
+document.getElementById('qtyHeader').textContent=t.qtyHeader;
+document.getElementById('lblQty').textContent=t.qtyLabel;
+document.getElementById('lblOperator').textContent=t.operator;
+document.getElementById('opOperator').placeholder=t.operatorPh;
+document.getElementById('lblMemo').textContent=t.memo;
+document.getElementById('opMemo').placeholder=t.memoPh;
+document.getElementById('confirmBtn').textContent=t.confirm;
+document.getElementById('lblBack').textContent=t.back;
+if(currentItem){
+document.getElementById('stockLbl').textContent=t.stockLbl+Number(currentItem['最低在庫'])+'）';
 }
-
-function showLang() {
-document.getElementById('langArea').style.display = 'flex';
-document.getElementById('scannerArea').style.display = 'none';
-document.getElementById('itemArea').style.display = 'none';
-document.getElementById('qtyArea').style.display = 'none';
 }
 
 // ── 画面切替 ──
-function showScreen(name) {
-document.getElementById('langArea').style.display = 'none';
-document.getElementById('scannerArea').style.display = name === 'scanner' ? 'flex' : 'none';
-document.getElementById('itemArea').style.display = name === 'item' ? 'block' : 'none';
-document.getElementById('qtyArea').style.display = name === 'qty' ? 'block' : 'none';
+function showScreen(name){
+currentScreen=name; // ★ 現在画面を記録
+document.getElementById('langArea').style.display='none';
+document.getElementById('scannerArea').style.display=name==='scanner'?'flex':'none';
+document.getElementById('itemArea').style.display=name==='item'?'block':'none';
+document.getElementById('qtyArea').style.display=name==='qty'?'block':'none';
 }
 
-// ── 取り消しボタンの状態更新 ──
-function updateCancelBtn() {
-var btn = document.getElementById('btnCancelOp');
-if (lastOp) {
-btn.classList.remove('disabled');
-} else {
-btn.classList.add('disabled');
-}
+// ── 取り消しボタン状態更新 ──
+function updateCancelBtn(){
+var btn=document.getElementById('btnCancelOp');
+if(lastOp){btn.classList.remove('disabled');}
+else{btn.classList.add('disabled');}
 }
 
 // ── スキャナー起動 ──
-var script = document.createElement('script');
-script.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
-script.onload = function() {
-currentLang = loadLang();
+var script=document.createElement('script');
+script.src='https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
+script.onload=function(){
+currentLang=loadLang();
 applyLang();
-startScanner();
+launchCamera();
 };
-script.onerror = function() {
-document.getElementById('scanMsg').textContent = 'Error';
-document.getElementById('scanMsg').className = 'err';
+script.onerror=function(){
+document.getElementById('scanMsg').textContent='Library Error';
+document.getElementById('scanMsg').className='err';
 };
 document.head.appendChild(script);
 
-function startScanner() {
-document.getElementById('scanMsg').textContent = LANG[currentLang].scanMsg;
-if (html5QrCode) {
-html5QrCode.stop().catch(function(){}).then(function() { html5QrCode.clear(); launchCamera(); });
-} else { launchCamera(); }
-}
-
-function launchCamera() {
-html5QrCode = new Html5Qrcode('reader');
+// ★ カメラ起動：毎回新インスタンスで作り直す（同じQR連続読み取り対応）
+function launchCamera(){
+var t=LANG[currentLang];
+document.getElementById('scanMsg').textContent=t.scanMsg;
+// ★ readerの中身をリセット
+var readerEl=document.getElementById('reader');
+readerEl.innerHTML='';
+html5QrCode=new Html5Qrcode('reader');
 html5QrCode.start(
-{ facingMode: 'environment' },
-{ fps: 10, qrbox: { width: 220, height: 220 } },
-function(decodedText) { html5QrCode.stop(); fetchItem(decodedText.trim()); },
-function() {}
-).catch(function(err) {
-document.getElementById('scanMsg').textContent = 'Camera Error: ' + err;
-document.getElementById('scanMsg').className = 'err';
+{facingMode:'environment'},
+{fps:10,qrbox:{width:220,height:220}},
+function(decodedText){
+html5QrCode.stop().then(function(){
+fetchItem(decodedText.trim());
+}).catch(function(){
+fetchItem(decodedText.trim());
+});
+},
+function(){}
+).catch(function(err){
+document.getElementById('scanMsg').textContent='Camera Error: '+err;
+document.getElementById('scanMsg').className='err';
 });
 }
 
-function fetchItem(itemId) {
-var t = LANG[currentLang];
-document.getElementById('scanMsg').textContent = t.fetching;
-fetch(GAS_URL + '?action=getItem&itemId=' + encodeURIComponent(itemId))
-.then(function(res) { return res.json(); })
-.then(function(data) {
-if (data.error) { showToast(data.error, 'err'); rescan(); return; }
-currentItem = data.item;
+function fetchItem(itemId){
+var t=LANG[currentLang];
+document.getElementById('scanMsg').textContent=t.fetching;
+fetch(GAS_URL+'?action=getItem&itemId='+encodeURIComponent(itemId))
+.then(function(res){return res.json();})
+.then(function(data){
+if(data.error){showToast(data.error,'err');rescan();return;}
+currentItem=data.item;
 showItemScreen();
 })
-.catch(function(err) { showToast(t.toastErr + ': ' + err.message, 'err'); rescan(); });
+.catch(function(err){showToast(LANG[currentLang].toastErr+': '+err.message,'err');rescan();});
 }
 
-function showItemScreen() {
-var item = currentItem, t = LANG[currentLang];
-var cur = Number(item['現在庫']), min = Number(item['最低在庫']);
-document.getElementById('itemName').textContent = item['品目名'];
-document.getElementById('itemCat').textContent = item['カテゴリ名'] || item['カテゴリID'];
-document.getElementById('stockBig').textContent = cur;
-var isLow = cur <= min, isWarn = !isLow && cur <= min * 1.2 && min > 0;
-document.getElementById('stockBox').className = 'stock-box' + (isLow ? ' danger' : isWarn ? ' warn' : '');
-document.getElementById('stockLbl').textContent = t.stockLbl + min + '）';
+function showItemScreen(){
+var item=currentItem,t=LANG[currentLang];
+var cur=Number(item['現在庫']),min=Number(item['最低在庫']);
+document.getElementById('itemName').textContent=item['品目名'];
+document.getElementById('itemCat').textContent=item['カテゴリ名']||item['カテゴリID'];
+document.getElementById('stockBig').textContent=cur;
+var isLow=cur<=min,isWarn=!isLow&&cur<=min*1.2&&min>0;
+document.getElementById('stockBox').className='stock-box'+(isLow?' danger':isWarn?' warn':'');
+document.getElementById('stockLbl').textContent=t.stockLbl+min+'）';
 updateCancelBtn();
 showScreen('item');
 }
 
-function showQty() {
-var t = LANG[currentLang];
-document.getElementById('qtyHeader').textContent = t.qtyHeader;
-document.getElementById('qtyItemName').textContent = currentItem['品目名'];
-document.getElementById('qtyItemCat').textContent = currentItem['カテゴリ名'] || currentItem['カテゴリID'];
-document.getElementById('confirmBtn').textContent = t.confirm;
-document.getElementById('qtyInput').value = '1';
-document.getElementById('opMemo').value = '';
-document.getElementById('opOperator').value = loadName();
+function showQty(){
+var t=LANG[currentLang];
+document.getElementById('qtyHeader').textContent=t.qtyHeader;
+document.getElementById('qtyItemName').textContent=currentItem['品目名'];
+document.getElementById('qtyItemCat').textContent=currentItem['カテゴリ名']||currentItem['カテゴリID'];
+document.getElementById('confirmBtn').textContent=t.confirm;
+document.getElementById('qtyInput').value='1';
+document.getElementById('opMemo').value='';
+// ★ 名前を確実に読み込む
+document.getElementById('opOperator').value=loadName();
 showScreen('qty');
 }
 
-function backToItem() { showScreen('item'); }
+function backToItem(){showScreen('item');}
 
-function chgQty(d) {
-var el = document.getElementById('qtyInput');
-el.value = Math.max(1, (parseInt(el.value) || 1) + d);
+function chgQty(d){
+var el=document.getElementById('qtyInput');
+el.value=Math.max(1,(parseInt(el.value)||1)+d);
 }
 
-document.addEventListener('touchstart', function(e) {
-var btn = e.target.closest('.qty-btn');
-if (!btn) return;
+document.addEventListener('touchstart',function(e){
+var btn=e.target.closest('.qty-btn');
+if(!btn)return;
 e.preventDefault();
-chgQty(btn.textContent === '＋' ? 1 : -1);
-}, { passive: false });
+chgQty(btn.textContent==='＋'?1:-1);
+},{passive:false});
 
-var lastTouchEnd = 0;
-document.addEventListener('touchend', function(e) {
-var now = Date.now();
-if (now - lastTouchEnd < 300) { e.preventDefault(); }
-lastTouchEnd = now;
-}, { passive: false });
+var lastTouchEnd=0;
+document.addEventListener('touchend',function(e){
+var now=Date.now();
+if(now-lastTouchEnd<300){e.preventDefault();}
+lastTouchEnd=now;
+},{passive:false});
 
-function submitOp() {
-if (isProcessing) return;
-var t = LANG[currentLang];
-var qty = parseInt(document.getElementById('qtyInput').value) || 0;
-if (qty < 1) { showToast(t.toastQty, 'err'); return; }
-var name = document.getElementById('opOperator').value.trim();
-if (!name) { showToast(t.toastName, 'err'); return; }
-saveName(name);
-isProcessing = true;
-var btn = document.getElementById('confirmBtn');
-btn.disabled = true; btn.textContent = t.processing;
-var op = {
-id: currentItem['品目ID'],
-type: 'OUT',
-qty: qty,
-operator: name,
-memo: document.getElementById('opMemo').value
-};
-fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'stockOperation', op: op }) })
-.then(function(res) { return res.json(); })
-.then(function(data) {
-isProcessing = false;
-if (data.error) {
-showToast(data.error, 'err');
-btn.disabled = false; btn.textContent = t.confirm;
-return;
-}
+function submitOp(){
+if(isProcessing)return;
+var t=LANG[currentLang];
+var qty=parseInt(document.getElementById('qtyInput').value)||0;
+if(qty<1){showToast(t.toastQty,'err');return;}
+var name=document.getElementById('opOperator').value.trim();
+if(!name){showToast(t.toastName,'err');return;}
+saveName(name); // ★ 確定時に保存
+isProcessing=true;
+var btn=document.getElementById('confirmBtn');
+btn.disabled=true;btn.textContent=t.processing;
+var op={id:currentItem['品目ID'],type:'OUT',qty:qty,operator:name,memo:document.getElementById('opMemo').value};
+fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'stockOperation',op:op})})
+.then(function(res){return res.json();})
+.then(function(data){
+isProcessing=false;
+if(data.error){showToast(data.error,'err');btn.disabled=false;btn.textContent=t.confirm;return;}
 // ★ 直前の操作を記憶
-lastOp = { itemId: op.id, itemName: currentItem['品目名'], qty: qty, operator: name };
-showToast(t.toastOk + qty + t.toastDone, 'ok');
-// 完了後2秒でスキャン画面に戻る
-setTimeout(function() {
-showItemScreen(); // 取り消しボタンをアクティブにするため品目画面へ
-}, 2000);
+lastOp={itemId:op.id,itemName:currentItem['品目名'],qty:qty,operator:name};
+showToast(t.toastOk+qty+t.toastDone,'ok');
+setTimeout(function(){
+showItemScreen(); // ★ 品目画面に戻る（取り消しボタンがアクティブな状態）
+},2000);
 })
-.catch(function(err) {
-isProcessing = false;
-btn.disabled = false; btn.textContent = t.confirm;
-showToast(t.toastErr + ': ' + err.message, 'err');
+.catch(function(err){
+isProcessing=false;
+btn.disabled=false;btn.textContent=t.confirm;
+showToast(t.toastErr+': '+err.message,'err');
 });
 }
 
 // ★ 取り消し操作
-function cancelOp() {
-if (!lastOp) return;
-var t = LANG[currentLang];
-if (document.getElementById('btnCancelOp').classList.contains('disabled')) return;
-if (isProcessing) return;
-isProcessing = true;
-var op = {
-id: lastOp.itemId,
-type: 'IN', // 逆方向（入庫）で取り消し
-qty: lastOp.qty,
-operator: lastOp.operator,
-memo: '【取り消し】' + lastOp.itemName + ' ' + lastOp.qty + '個'
+function cancelOp(){
+var btn=document.getElementById('btnCancelOp');
+if(btn.classList.contains('disabled')||!lastOp||isProcessing)return;
+var t=LANG[currentLang];
+isProcessing=true;
+var op={
+id:lastOp.itemId,
+type:'IN', // 逆方向で取り消し
+qty:lastOp.qty,
+operator:lastOp.operator,
+memo:'【取り消し】'+lastOp.itemName+' '+lastOp.qty+'個'
 };
-fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'stockOperation', op: op }) })
-.then(function(res) { return res.json(); })
-.then(function(data) {
-isProcessing = false;
-if (data.error) { showToast(data.error, 'err'); return; }
-lastOp = null; // ★ 取り消し後はリセット
+fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'stockOperation',op:op})})
+.then(function(res){return res.json();})
+.then(function(data){
+isProcessing=false;
+if(data.error){showToast(data.error,'err');return;}
+lastOp=null;
 updateCancelBtn();
-showToast(t.toastCancel, 'ok');
-setTimeout(function() { rescan(); }, 2000);
+showToast(t.toastCancel,'ok');
+setTimeout(function(){rescan();},2000);
 })
-.catch(function(err) {
-isProcessing = false;
-showToast(t.toastErr + ': ' + err.message, 'err');
+.catch(function(err){
+isProcessing=false;
+showToast(t.toastErr+': '+err.message,'err');
 });
 }
 
-function rescan() {
-currentItem = null;
+// ★ 毎回新インスタンスでカメラ起動（同じQR連続読み取り対応）
+function rescan(){
+currentItem=null;
 showScreen('scanner');
-if (html5QrCode) {
-try {
-html5QrCode.stop().catch(function(){}).finally(function() {
-html5QrCode.clear(); html5QrCode = null; launchCamera();
+if(html5QrCode){
+html5QrCode.stop().catch(function(){}).finally(function(){
+html5QrCode.clear();
+html5QrCode=null;
+launchCamera();
 });
-} catch(e) { html5QrCode = null; launchCamera(); }
-} else { launchCamera(); }
+} else {
+launchCamera();
+}
 }
 
-function showToast(msg, type) {
-var el = document.getElementById('toast');
-el.textContent = (type === 'ok' ? '✓ ' : '⚠ ') + msg;
-el.className = 'toast ' + type + ' show';
-setTimeout(function() { el.classList.remove('show'); }, 2800);
+function showToast(msg,type){
+var el=document.getElementById('toast');
+el.textContent=(type==='ok'?'✓ ':'⚠ ')+msg;
+el.className='toast '+type+' show';
+setTimeout(function(){el.classList.remove('show');},2800);
 }
 
-// index.htmlからのメッセージ対応
-window.addEventListener('message', function(e) {
-if (e.data && e.data.type === 'GET_OPERATOR_NAME') {
-e.source.postMessage({ type: 'OPERATOR_NAME', name: loadName() }, '*');
+window.addEventListener('message',function(e){
+if(e.data&&e.data.type==='GET_OPERATOR_NAME'){
+e.source.postMessage({type:'OPERATOR_NAME',name:loadName()},'*');
 }
 });
 </script>
