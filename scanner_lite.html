@@ -94,7 +94,6 @@ html,body{background:var(--bg);color:var(--chalk);font-family:'M PLUS 1',sans-se
 <div id="scannerArea">
 <div id="reader"></div>
 <div id="scanMsg">読み込み中...</div>
-<button class="btn-close-red" onclick="window.close()">閉じる</button>
 </div>
 
 <div id="itemArea">
@@ -115,7 +114,6 @@ html,body{background:var(--bg);color:var(--chalk);font-family:'M PLUS 1',sans-se
 </button>
 </div>
 <button class="btn-secondary" onclick="rescan()">📷 <span id="lblRescan">別のQRを読み込む</span></button>
-<button class="btn-close-red" onclick="window.close()"><span id="lblClose2">閉じる</span></button>
 </div>
 
 <div id="qtyArea">
@@ -142,7 +140,6 @@ html,body{background:var(--bg);color:var(--chalk);font-family:'M PLUS 1',sans-se
 </div>
 <button id="confirmBtn" class="btn-primary btn-confirm-use" onclick="submitOp()"></button>
 <button class="btn-secondary" onclick="backToItem()">← <span id="lblBack">戻る</span></button>
-<button class="btn-close-red" onclick="window.close()"><span id="lblClose3">閉じる</span></button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -310,6 +307,7 @@ showItemScreen();
 function showItemScreen(){
 var item=currentItem,t=LANG[currentLang];
 var cur=Number(item['現在庫']),min=Number(item['最低在庫']);
+isProcessing=false; // ★ 必ずリセット
 document.getElementById('itemName').textContent=item['品目名'];
 document.getElementById('itemCat').textContent=item['カテゴリ名']||item['カテゴリID'];
 document.getElementById('stockBig').textContent=cur;
@@ -325,11 +323,15 @@ var t=LANG[currentLang];
 document.getElementById('qtyHeader').textContent=t.qtyHeader;
 document.getElementById('qtyItemName').textContent=currentItem['品目名'];
 document.getElementById('qtyItemCat').textContent=currentItem['カテゴリ名']||currentItem['カテゴリID'];
-document.getElementById('confirmBtn').textContent=t.confirm;
+var btn=document.getElementById('confirmBtn');
+btn.textContent=t.confirm;
+btn.disabled=false;
 document.getElementById('qtyInput').value='1';
 document.getElementById('opMemo').value='';
-// ★ 名前を確実に読み込む
-document.getElementById('opOperator').value=loadName();
+// ★ localStorageから直接読む（キャッシュを経由しない）
+var name='';
+try{name=localStorage.getItem('operator_name')||'';}catch(e){}
+document.getElementById('opOperator').value=name;
 showScreen('qty');
 }
 
@@ -345,13 +347,6 @@ var btn=e.target.closest('.qty-btn');
 if(!btn)return;
 e.preventDefault();
 chgQty(btn.textContent==='＋'?1:-1);
-},{passive:false});
-
-var lastTouchEnd=0;
-document.addEventListener('touchend',function(e){
-var now=Date.now();
-if(now-lastTouchEnd<300){e.preventDefault();}
-lastTouchEnd=now;
 },{passive:false});
 
 function submitOp(){
@@ -387,6 +382,9 @@ var btn=document.getElementById('btnCancelOp');
 if(btn.classList.contains('disabled')||!lastOp||isProcessing)return;
 var t=LANG[currentLang];
 isProcessing=true;
+// ★ ボタンを処理中表示に変更
+btn.classList.add('disabled');
+document.getElementById('lblCancel').textContent='処理中...';
 var op={
 id:lastOp.itemId,type:'IN',qty:lastOp.qty,operator:lastOp.operator,
 memo:'【取り消し】'+lastOp.itemName+' '+lastOp.qty+'個'
@@ -394,15 +392,24 @@ memo:'【取り消し】'+lastOp.itemName+' '+lastOp.qty+'個'
 fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'stockOperation',op:op})})
 .then(function(res){return res.json();})
 .then(function(data){
-isProcessing=false; // ★ 必ずリセット
-if(data.error){showToast(data.error,'err');return;}
+isProcessing=false;
+if(data.error){
+// エラー時はボタンを戻す
+document.getElementById('lblCancel').textContent=t.cancelBtn;
+btn.classList.remove('disabled');
+showToast(data.error,'err');
+return;
+}
 lastOp=null;
 updateCancelBtn();
+document.getElementById('lblCancel').textContent=t.cancelBtn;
 showToast(t.toastCancel,'ok');
 setTimeout(function(){rescan();},2000);
 })
 .catch(function(err){
-isProcessing=false; // ★ 必ずリセット
+isProcessing=false;
+document.getElementById('lblCancel').textContent=t.cancelBtn;
+btn.classList.remove('disabled');
 showToast(t.toastErr+': '+err.message,'err');
 });
 }
