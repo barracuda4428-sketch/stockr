@@ -106,7 +106,7 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 </button>
 <div class="header-title">QRスキャナーLite<span>TSUTSUISTOCKR</span></div>
 <button class="lang-btn close-btn" onclick="doClose()" title="閉じる">
-<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
 </button>
 </div>
 
@@ -339,25 +339,15 @@ var name = document.getElementById('opName').value.trim();
 if(qty < 1){ toast(t('errQty'), 'err'); return; }
 if(!name){ toast(t('errName'), 'err'); return; }
 saveName(name);
-var btn = document.getElementById('btnConfirm');
-btn.disabled = true;
-document.getElementById('tConfirm').textContent = t('processing');
-fetch(GAS_URL + '?action=getCorrectionCandidates&itemId=' + encodeURIComponent(curItem['品目ID']) + '&qty=' + qty + '&type=' + curOpType + '&operator=' + encodeURIComponent(name), {redirect:'follow'})
-.then(function(r){ return r.json(); })
-.then(function(candidates){
-btn.disabled = false;
-document.getElementById('tConfirm').textContent = curOpType === 'OUT' ? t('confirmOut') : t('confirmIn');
-if(Array.isArray(candidates) && candidates.length > 0){
-openCorrOverlay(candidates, qty, name, curOpType);
-} else {
-executeOp(curOpType, qty, name, document.getElementById('opMemo').value);
-}
-})
-.catch(function(){
-btn.disabled = false;
-document.getElementById('tConfirm').textContent = curOpType === 'OUT' ? t('confirmOut') : t('confirmIn');
-executeOp(curOpType, qty, name, document.getElementById('opMemo').value);
-});
+// ★ テスト：ダミー候補でダイアログを強制表示
+var dummyCandidates = [{
+timestamp: '05/17 10:00',
+timestampFull: '2026/05/17 10:00:00',
+type: curOpType === 'OUT' ? '入庫' : '出庫',
+qty: qty,
+operator: name
+}];
+openCorrOverlay(dummyCandidates, qty, name, curOpType);
 }
 
 function executeOp(opType, qty, name, memo){
