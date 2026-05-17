@@ -358,9 +358,10 @@ openCorrOverlay(candidates, qty, name, curOpType);
 executeOp(curOpType, qty, name, document.getElementById('opMemo').value);
 }
 })
-.catch(function(){
+.catch(function(e){
 btn.disabled = false;
 document.getElementById('tConfirm').textContent = curOpType === 'OUT' ? t('confirmOut') : t('confirmIn');
+toast('候補検索エラー→通常実行', 'err');
 executeOp(curOpType, qty, name, document.getElementById('opMemo').value);
 });
 }
