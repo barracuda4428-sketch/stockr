@@ -62,8 +62,19 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 .action-btn:active{opacity:.8}
 .btn-icon{font-size:22px;line-height:1}
 .btn-use{background:var(--green-lt);border-color:var(--green);color:var(--green)}
+.btn-stock{background:var(--blue-lt);border-color:var(--blue);color:var(--blue)}
 .btn-undo{background:var(--red-lt);border-color:var(--red);color:var(--red)}
 .btn-undo.off{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.12);color:var(--chalk3);opacity:0.45;pointer-events:none;}
+/* 訂正モーダル */
+.corr-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);align-items:flex-end;justify-content:center}
+.corr-overlay.open{display:flex}
+.corr-modal{background:var(--surface);border-radius:14px 14px 0 0;padding:16px;width:100%;max-height:80vh;overflow-y:auto}
+.corr-title{font-size:14px;font-weight:900;color:var(--yellow);margin-bottom:8px}
+.corr-desc{font-size:12px;color:var(--chalk2);margin-bottom:10px}
+.corr-item{background:var(--card);border:2px solid var(--border);border-radius:var(--r-sm);padding:8px 10px;margin-bottom:6px;cursor:pointer}
+.corr-item.selected{border-color:var(--yellow);background:var(--yellow-lt)}
+.corr-item-ts{font-size:13px;font-weight:700;color:var(--chalk)}
+.corr-item-detail{font-size:11px;color:var(--chalk3)}
 .qty-header{font-size:14px;font-weight:900;color:var(--yellow);margin-bottom:6px;text-align:center}
 .qty-section{background:var(--card);border-radius:var(--r);padding:8px;border:2px solid var(--border);margin-bottom:6px;text-align:center}
 .qty-label{font-size:11px;color:var(--chalk2);font-weight:900;margin-bottom:6px;letter-spacing:.06em}
@@ -89,9 +100,13 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 <body>
 
 <div class="header">
-<button class="lang-btn" onclick="showLang()">🌐</button>
+<button class="lang-btn" onclick="showLang()" title="言語選択">
+<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M325-111.5q-73-31.5-127.5-86t-86-127.5Q80-398 80-480.5t31.5-155q31.5-72.5 86-127t127.5-86Q398-880 480.5-880t155 31.5q72.5 31.5 127 86t86 127Q880-563 880-480.5T848.5-325q-31.5 73-86 127.5t-127 86Q563-80 480.5-80T325-111.5ZM480-162q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>
+</button>
 <div class="header-title">QRスキャナーLite<span>TSUTSUISTOCKR</span></div>
-<div style="width:44px"></div>
+<button class="lang-btn" onclick="doClose()" title="閉じる">
+<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>
+</button>
 </div>
 
 <!-- 言語選択 -->
@@ -122,11 +137,11 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 <div class="stock-lbl" id="iStockLbl"></div>
 </div>
 <div class="action-btns">
-<button class="action-btn btn-use" id="btnUse" onclick="goQty()">
+<button class="action-btn btn-use" id="btnUse" onclick="goQty('USE')">
 <span class="btn-icon">📤</span><span id="tUse">使　用</span>
 </button>
-<button class="action-btn btn-undo off" id="btnUndo" onclick="doUndo()">
-<span class="btn-icon">🔄</span><span id="tUndo">取り消し</span>
+<button class="action-btn btn-stock" id="btnStock" onclick="goQty('IN')">
+<span class="btn-icon">📥</span><span id="tStock">補　充</span>
 </button>
 </div>
 <button class="btn-sec" onclick="doRescan()">📷 <span id="tRescan">別のQRを読み込む</span></button>
@@ -156,6 +171,19 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 
 <div class="toast" id="toast"></div>
 
+<!-- 訂正モーダル -->
+
+<div class="corr-overlay" id="corrOverlay">
+<div class="corr-modal">
+<div class="corr-title" id="corrTitle">訂正候補</div>
+<div class="corr-desc" id="corrDesc"></div>
+<div id="corrList"></div>
+<button id="corrExecBtn" class="btn-primary btn-confirm" style="margin-top:8px" onclick="doCorrection()">訂正として実行</button>
+<button class="btn-sec" style="margin-top:4px" onclick="doNewOp()">訂正ではない（新規入力）</button>
+<button class="btn-sec" style="margin-top:4px" onclick="closeCorrOverlay()">キャンセル</button>
+</div>
+</div>
+
 <script>
 var GAS_URL = 'https://script.google.com/macros/s/AKfycbxrovTrx5M5o5I6gXxcMT-T5ZXvIRqfT4LLP6AtfpzEaOIqugTYejF56UFMNFl0nuk3/exec';
 
@@ -168,9 +196,12 @@ var qr = null;
 
 // ── 多言語 ──
 var T = {
-ja: { scan:'QRコードをカメラに向けてください', fetch:'品目を取得中...', use:'使　用', undo:'取り消し', rescan:'📷 別のQRを読み込む', qtyHdr:'📤 使用（出庫）', qty:'数　量', op:'作業者', opPh:'氏名を入力', memo:'メモ（任意）', memoPh:'', confirm:'確定（使用）', back:'戻る', stockLbl:'現在庫（最低在庫: ', ok:'使用 ', done:' 完了', undoOk:'取り消し 完了', errQty:'数量を入力してください', errName:'作業者名を入力してください', errConn:'通信エラー', processing:'処理中...' },
-vi: { scan:'Hướng camera vào mã QR', fetch:'Đang tải...', use:'Sử dụng', undo:'Hoàn tác', rescan:'📷 Quét mã QR khác', qtyHdr:'📤 Sử dụng (Xuất kho)', qty:'Số lượng', op:'Người thực hiện', opPh:'Nhập tên', memo:'Ghi chú (tùy chọn)', memoPh:'', confirm:'Xác nhận', back:'Quay lại', stockLbl:'Tồn kho (Tối thiểu: ', ok:'Sử dụng ', done:' xong', undoOk:'Hoàn tác xong', errQty:'Nhập số lượng', errName:'Nhập tên', errConn:'Lỗi kết nối', processing:'Đang xử lý...' },
-id: { scan:'Arahkan kamera ke kode QR', fetch:'Memuat...', use:'Digunakan', undo:'Batalkan', rescan:'📷 Pindai QR lain', qtyHdr:'📤 Digunakan (Keluar)', qty:'Jumlah', op:'Pekerja', opPh:'Masukkan nama', memo:'Catatan (opsional)', memoPh:'', confirm:'Konfirmasi', back:'Kembali', stockLbl:'Stok (Minimum: ', ok:'Digunakan ', done:' selesai', undoOk:'Pembatalan berhasil', errQty:'Masukkan jumlah', errName:'Masukkan nama', errConn:'Kesalahan koneksi', processing:'Memproses...' }
+ja: { scan:'QRコードをカメラに向けてください', fetch:'品目を取得中...', use:'使　用', stock:'補　充', rescan:'📷 別のQRを読み込む', qtyHdrOut:'📤 使用（出庫）', qtyHdrIn:'📥 補充（入庫）', qty:'数　量', op:'作業者', opPh:'氏名を入力', memo:'メモ（任意）', memoPh:'', confirmOut:'確定（使用）', confirmIn:'確定（補充）', back:'戻る', stockLbl:'現在庫（最低在庫: ', okOut:'使用 ', okIn:'補充 ', done:' 完了', errQty:'数量を入力してください', errName:'作業者名を入力してください', errConn:'通信エラー', processing:'処理中...',
+corrTitle:'同じ入力が見つかりました', corrNewOp:'訂正ではない（新規入力）', corrCancel:'キャンセル', corrExec:'訂正として実行' },
+vi: { scan:'Hướng camera vào mã QR', fetch:'Đang tải...', use:'Sử dụng', stock:'Nhập kho', rescan:'📷 Quét mã QR khác', qtyHdrOut:'📤 Sử dụng (Xuất kho)', qtyHdrIn:'📥 Nhập kho', qty:'Số lượng', op:'Người thực hiện', opPh:'Nhập tên', memo:'Ghi chú (tùy chọn)', memoPh:'', confirmOut:'Xác nhận (Xuất)', confirmIn:'Xác nhận (Nhập)', back:'Quay lại', stockLbl:'Tồn kho (Tối thiểu: ', okOut:'Sử dụng ', okIn:'Nhập kho ', done:' xong', errQty:'Nhập số lượng', errName:'Nhập tên', errConn:'Lỗi kết nối', processing:'Đang xử lý...',
+corrTitle:'Tìm thấy mục tương tự', corrNewOp:'Không phải sửa (Nhập mới)', corrCancel:'Hủy', corrExec:'Thực hiện sửa' },
+id: { scan:'Arahkan kamera ke kode QR', fetch:'Memuat...', use:'Digunakan', stock:'Masuk', rescan:'📷 Pindai QR lain', qtyHdrOut:'📤 Digunakan (Keluar)', qtyHdrIn:'📥 Masuk', qty:'Jumlah', op:'Pekerja', opPh:'Masukkan nama', memo:'Catatan (opsional)', memoPh:'', confirmOut:'Konfirmasi (Keluar)', confirmIn:'Konfirmasi (Masuk)', back:'Kembali', stockLbl:'Stok (Minimum: ', okOut:'Digunakan ', okIn:'Masuk ', done:' selesai', errQty:'Masukkan jumlah', errName:'Masukkan nama', errConn:'Kesalahan koneksi', processing:'Memproses...',
+corrTitle:'Ditemukan input serupa', corrNewOp:'Bukan koreksi (Input baru)', corrCancel:'Batal', corrExec:'Lakukan koreksi' }
 };
 var lang = 'ja';
 
@@ -204,26 +235,26 @@ saveLang(l);
 applyLang();
 show(curScreen);
 }
+var curOpType = 'OUT';
+
 function applyLang(){
 document.getElementById('scanMsg').textContent = t('scan');
 document.getElementById('tUse').textContent = t('use');
-document.getElementById('tUndo').textContent = t('undo');
+document.getElementById('tStock').textContent = t('stock');
 document.getElementById('tRescan').textContent = t('rescan');
-document.getElementById('tQtyHeader').textContent= t('qtyHdr');
 document.getElementById('tQtyLabel').textContent = t('qty');
 document.getElementById('tOperator').textContent = t('op');
 document.getElementById('opName').placeholder = t('opPh');
 document.getElementById('tMemo').textContent = t('memo');
 document.getElementById('opMemo').placeholder = t('memoPh');
-document.getElementById('tConfirm').textContent = t('confirm');
+document.getElementById('tConfirm').textContent = curOpType === 'OUT' ? t('confirmOut') : t('confirmIn');
 document.getElementById('tBack').textContent = t('back');
+document.getElementById('corrExecBtn').textContent = t('corrExec');
 }
 
-// ── QRスキャナー ──
 function startCamera(){
 document.getElementById('scanMsg').textContent = t('scan');
 document.getElementById('scanMsg').className = '';
-// readerをリセット
 document.getElementById('reader').innerHTML = '';
 qr = new Html5Qrcode('reader');
 qr.start(
@@ -259,30 +290,27 @@ showItem();
 }
 
 function showItem(){
-busy = false; // ★ 必ずリセット
+busy = false;
 var cur = Number(curItem['現在庫']), min = Number(curItem['最低在庫']);
 document.getElementById('iName').textContent = curItem['品目名'];
 document.getElementById('iCat').textContent = curItem['カテゴリ名'] || curItem['カテゴリID'];
 document.getElementById('iStock').textContent = cur;
 document.getElementById('iStockLbl').textContent = t('stockLbl') + min + '）';
-var isLow = cur <= min, isWarn = !isLow && cur <= min * 1.2 && min > 0;
+var isLow = cur <= min && min > 0, isWarn = !isLow && cur <= min * 1.2 && min > 0;
 document.getElementById('iStockBox').className = 'stock-box' + (isLow ? ' danger' : isWarn ? ' warn' : '');
-// 取り消しボタン
-var btnUndo = document.getElementById('btnUndo');
-if(lastOp){ btnUndo.classList.remove('off'); }
-else{ btnUndo.classList.add('off'); }
-document.getElementById('tUndo').textContent = t('undo');
+document.getElementById('tUse').textContent = t('use');
+document.getElementById('tStock').textContent = t('stock');
 show('item');
 }
 
-function goQty(){
+function goQty(opType){
 if(busy) return;
+curOpType = opType || 'OUT';
 document.getElementById('qName').textContent = curItem['品目名'];
 document.getElementById('qCat').textContent = curItem['カテゴリ名'] || curItem['カテゴリID'];
-document.getElementById('tQtyHeader').textContent = t('qtyHdr');
-document.getElementById('tConfirm').textContent = t('confirm');
-var btn = document.getElementById('btnConfirm');
-btn.disabled = false;
+document.getElementById('tQtyHeader').textContent = curOpType === 'OUT' ? t('qtyHdrOut') : t('qtyHdrIn');
+document.getElementById('tConfirm').textContent = curOpType === 'OUT' ? t('confirmOut') : t('confirmIn');
+document.getElementById('btnConfirm').disabled = false;
 document.getElementById('qtyInput').value = '1';
 document.getElementById('opMemo').value = '';
 document.getElementById('opName').value = loadName();
@@ -310,53 +338,115 @@ var name = document.getElementById('opName').value.trim();
 if(qty < 1){ toast(t('errQty'), 'err'); return; }
 if(!name){ toast(t('errName'), 'err'); return; }
 saveName(name);
+var btn = document.getElementById('btnConfirm');
+btn.disabled = true;
+document.getElementById('tConfirm').textContent = t('processing');
+fetch(GAS_URL + '?action=getCorrectionCandidates&itemId=' + encodeURIComponent(curItem['品目ID']) + '&qty=' + qty + '&type=' + curOpType + '&operator=' + encodeURIComponent(name))
+.then(function(r){ return r.json(); })
+.then(function(candidates){
+btn.disabled = false;
+document.getElementById('tConfirm').textContent = curOpType === 'OUT' ? t('confirmOut') : t('confirmIn');
+if(Array.isArray(candidates) && candidates.length > 0){
+openCorrOverlay(candidates, qty, name, curOpType);
+} else {
+executeOp(curOpType, qty, name, document.getElementById('opMemo').value);
+}
+})
+.catch(function(){
+btn.disabled = false;
+document.getElementById('tConfirm').textContent = curOpType === 'OUT' ? t('confirmOut') : t('confirmIn');
+executeOp(curOpType, qty, name, document.getElementById('opMemo').value);
+});
+}
+
+function executeOp(opType, qty, name, memo){
 busy = true;
 var btn = document.getElementById('btnConfirm');
 btn.disabled = true;
 document.getElementById('tConfirm').textContent = t('processing');
 fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'stockOperation', op: {
-id: curItem['品目ID'], type: 'OUT', qty: qty, operator: name, memo: document.getElementById('opMemo').value
+id: curItem['品目ID'], type: opType, qty: qty, operator: name, memo: memo
 }})})
 .then(function(r){ return r.json(); })
 .then(function(d){
 busy = false;
-if(d.error){ toast(d.error, 'err'); btn.disabled = false; document.getElementById('tConfirm').textContent = t('confirm'); return; }
-lastOp = { id: curItem['品目ID'], qty: qty, operator: name };
-toast(t('ok') + qty + t('done'), 'ok');
+if(d.error){ toast(d.error, 'err'); btn.disabled = false; document.getElementById('tConfirm').textContent = opType === 'OUT' ? t('confirmOut') : t('confirmIn'); return; }
+toast((opType === 'OUT' ? t('okOut') : t('okIn')) + qty + t('done'), 'ok');
 setTimeout(showItem, 2000);
 })
 .catch(function(){
 busy = false;
 btn.disabled = false;
-document.getElementById('tConfirm').textContent = t('confirm');
+document.getElementById('tConfirm').textContent = opType === 'OUT' ? t('confirmOut') : t('confirmIn');
 toast(t('errConn'), 'err');
 });
 }
 
-function doUndo(){
-if(busy || !lastOp) return;
-busy = true;
-var btnUndo = document.getElementById('btnUndo');
-btnUndo.classList.add('off');
-document.getElementById('tUndo').textContent = t('processing');
-fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'stockOperation', op: {
-id: lastOp.id, type: 'IN', qty: lastOp.qty, operator: lastOp.operator, memo: '【取り消し】'
+var _corrPending = null;
+var _corrSelectedTs = null;
+
+function openCorrOverlay(candidates, qty, name, opType){
+_corrPending = { qty: qty, name: name, opType: opType };
+_corrSelectedTs = null;
+var typeLabel = opType === 'OUT' ? '出庫' : '入庫';
+var corrLabel = opType === 'OUT' ? '入庫' : '出庫';
+document.getElementById('corrTitle').textContent = t('corrTitle');
+document.getElementById('corrDesc').textContent = '「' + curItem['品目名'] + '」' + qty + '個の' + typeLabel + 'と同じ数量の' + corrLabel + '記録があります。過去の' + corrLabel + 'ミスの訂正ですか？';
+var list = document.getElementById('corrList');
+list.innerHTML = '';
+candidates.forEach(function(c){
+var el = document.createElement('div');
+el.className = 'corr-item';
+el.innerHTML = '<div class="corr-item-ts">' + c.timestamp + ' ' + c.type + '</div><div class="corr-item-detail">数量：' + c.qty + '個　作業者：' + c.operator + '</div>';
+el.addEventListener('click', function(){
+document.querySelectorAll('.corr-item').forEach(function(e){ e.classList.remove('selected'); });
+el.classList.add('selected');
+_corrSelectedTs = c.timestampFull;
+});
+list.appendChild(el);
+});
+document.getElementById('corrOverlay').classList.add('open');
+}
+
+function closeCorrOverlay(){
+document.getElementById('corrOverlay').classList.remove('open');
+_corrPending = null;
+_corrSelectedTs = null;
+}
+
+function doCorrection(){
+if(!_corrSelectedTs){ toast('訂正対象を選択してください', 'err'); return; }
+var p = _corrPending;
+var btn = document.getElementById('corrExecBtn');
+btn.disabled = true;
+btn.textContent = t('processing');
+fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'submitCorrection', params: {
+itemId: curItem['品目ID'], qty: p.qty,
+originalType: p.opType === 'OUT' ? '入庫' : '出庫',
+originalTimestamp: _corrSelectedTs,
+reason: '入力ミスによる訂正',
+operator: p.name
 }})})
 .then(function(r){ return r.json(); })
 .then(function(d){
-busy = false;
-document.getElementById('tUndo').textContent = t('undo');
-if(d.error){ btnUndo.classList.remove('off'); toast(d.error, 'err'); return; }
-lastOp = null;
-toast(t('undoOk'), 'ok');
-setTimeout(doRescan, 2000);
+btn.disabled = false;
+btn.textContent = t('corrExec');
+if(d.error){ toast(d.error, 'err'); return; }
+closeCorrOverlay();
+toast('訂正完了', 'ok');
+setTimeout(showItem, 2000);
 })
 .catch(function(){
-busy = false;
-btnUndo.classList.remove('off');
-document.getElementById('tUndo').textContent = t('undo');
+btn.disabled = false;
+btn.textContent = t('corrExec');
 toast(t('errConn'), 'err');
 });
+}
+
+function doNewOp(){
+var p = _corrPending;
+closeCorrOverlay();
+executeOp(p.opType, p.qty, p.name, document.getElementById('opMemo').value);
 }
 
 function doRescan(){
@@ -386,7 +476,11 @@ el.className = 'toast ' + type + ' show';
 setTimeout(function(){ el.classList.remove('show'); }, 2800);
 }
 
-// ── 起動 ──
+function doClose(){
+if(window.opener) window.close();
+else history.back();
+}
+
 var s = document.createElement('script');
 s.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
 s.onload = function(){
