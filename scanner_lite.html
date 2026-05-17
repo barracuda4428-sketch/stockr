@@ -342,11 +342,14 @@ saveName(name);
 var btn = document.getElementById('btnConfirm');
 btn.disabled = true;
 document.getElementById('tConfirm').textContent = t('processing');
-fetch(GAS_URL + '?action=getCorrectionCandidates&itemId=' + encodeURIComponent(curItem['品目ID']) + '&qty=' + qty + '&type=' + curOpType + '&operator=' + encodeURIComponent(name), {method:'GET',redirect:'follow'})
-.then(function(r){ return r.text(); })
-.then(function(text){
-var candidates = [];
-try{ candidates = JSON.parse(text); }catch(e){}
+var corrUrl = GAS_URL + '?action=getCorrectionCandidates'
++ '&itemId=' + encodeURIComponent(curItem['品目ID'])
++ '&qty=' + encodeURIComponent(qty)
++ '&type=' + encodeURIComponent(curOpType)
++ '&operator=' + encodeURIComponent(name);
+fetch(corrUrl)
+.then(function(r){ return r.json(); })
+.then(function(candidates){
 btn.disabled = false;
 document.getElementById('tConfirm').textContent = curOpType === 'OUT' ? t('confirmOut') : t('confirmIn');
 if(Array.isArray(candidates) && candidates.length > 0){
