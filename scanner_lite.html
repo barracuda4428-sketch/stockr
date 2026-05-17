@@ -348,8 +348,10 @@ var corrUrl = GAS_URL + '?action=getCorrectionCandidates'
 + '&type=' + encodeURIComponent(curOpType)
 + '&operator=' + encodeURIComponent(name);
 fetch(corrUrl)
-.then(function(r){ return r.json(); })
-.then(function(candidates){
+.then(function(r){ return r.text(); })
+.then(function(text){
+var candidates = [];
+try{ candidates = JSON.parse(text); }catch(e){ toast('parse error', 'err'); }
 btn.disabled = false;
 document.getElementById('tConfirm').textContent = curOpType === 'OUT' ? t('confirmOut') : t('confirmIn');
 if(Array.isArray(candidates) && candidates.length > 0){
