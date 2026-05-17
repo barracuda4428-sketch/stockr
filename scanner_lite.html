@@ -32,7 +32,8 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 }
 .header-title{font-size:15px;font-weight:900;color:#26b314;letter-spacing:.06em;flex:1;text-align:center}
 .header-title span{font-size:10px;color:var(--chalk3);font-weight:500;display:block}
-.lang-btn{background:var(--surface);border:2px solid var(--border);border-radius:var(--r-sm);padding:2px 8px;font-size:16px;cursor:pointer;}
+.lang-btn{background:var(--surface);border:2px solid var(--border);border-radius:var(--r-sm);padding:2px 8px;font-size:16px;cursor:pointer;color:var(--chalk);}
+.lang-btn.close-btn{border-color:var(--red);color:var(--red);background:var(--red-lt);}
 
 /* 言語選択 */
 #langArea{display:none;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;}
@@ -62,7 +63,7 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 .action-btn:active{opacity:.8}
 .btn-icon{font-size:22px;line-height:1}
 .btn-use{background:var(--green-lt);border-color:var(--green);color:var(--green)}
-.btn-stock{background:var(--blue-lt);border-color:var(--blue);color:var(--blue)}
+.btn-stock{background:var(--yellow-lt);border-color:var(--yellow);color:var(--yellow)}
 .btn-undo{background:var(--red-lt);border-color:var(--red);color:var(--red)}
 .btn-undo.off{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.12);color:var(--chalk3);opacity:0.45;pointer-events:none;}
 /* 訂正モーダル */
@@ -104,7 +105,7 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M325-111.5q-73-31.5-127.5-86t-86-127.5Q80-398 80-480.5t31.5-155q31.5-72.5 86-127t127.5-86Q398-880 480.5-880t155 31.5q72.5 31.5 127 86t86 127Q880-563 880-480.5T848.5-325q-31.5 73-86 127.5t-127 86Q563-80 480.5-80T325-111.5ZM480-162q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>
 </button>
 <div class="header-title">QRスキャナーLite<span>TSUTSUISTOCKR</span></div>
-<button class="lang-btn" onclick="doClose()" title="閉じる">
+<button class="lang-btn close-btn" onclick="doClose()" title="閉じる">
 <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>
 </button>
 </div>
@@ -341,7 +342,7 @@ saveName(name);
 var btn = document.getElementById('btnConfirm');
 btn.disabled = true;
 document.getElementById('tConfirm').textContent = t('processing');
-fetch(GAS_URL + '?action=getCorrectionCandidates&itemId=' + encodeURIComponent(curItem['品目ID']) + '&qty=' + qty + '&type=' + curOpType + '&operator=' + encodeURIComponent(name))
+fetch(GAS_URL + '?action=getCorrectionCandidates&itemId=' + encodeURIComponent(curItem['品目ID']) + '&qty=' + qty + '&type=' + curOpType + '&operator=' + encodeURIComponent(name), {redirect:'follow'})
 .then(function(r){ return r.json(); })
 .then(function(candidates){
 btn.disabled = false;
