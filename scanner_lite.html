@@ -339,15 +339,27 @@ var name = document.getElementById('opName').value.trim();
 if(qty < 1){ toast(t('errQty'), 'err'); return; }
 if(!name){ toast(t('errName'), 'err'); return; }
 saveName(name);
-// ★ テスト：ダミー候補でダイアログを強制表示
-var dummyCandidates = [{
-timestamp: '05/17 10:00',
-timestampFull: '2026/05/17 10:00:00',
-type: curOpType === 'OUT' ? '入庫' : '出庫',
-qty: qty,
-operator: name
-}];
-openCorrOverlay(dummyCandidates, qty, name, curOpType);
+var btn = document.getElementById('btnConfirm');
+btn.disabled = true;
+document.getElementById('tConfirm').textContent = t('processing');
+fetch(GAS_URL + '?action=getCorrectionCandidates&itemId=' + encodeURIComponent(curItem['品目ID']) + '&qty=' + qty + '&type=' + curOpType + '&operator=' + encodeURIComponent(name), {method:'GET',redirect:'follow'})
+.then(function(r){ return r.text(); })
+.then(function(text){
+var candidates = [];
+try{ candidates = JSON.parse(text); }catch(e){}
+btn.disabled = false;
+document.getElementById('tConfirm').textContent = curOpType === 'OUT' ? t('confirmOut') : t('confirmIn');
+if(Array.isArray(candidates) && candidates.length > 0){
+openCorrOverlay(candidates, qty, name, curOpType);
+} else {
+executeOp(curOpType, qty, name, document.getElementById('opMemo').value);
+}
+})
+.catch(function(){
+btn.disabled = false;
+document.getElementById('tConfirm').textContent = curOpType === 'OUT' ? t('confirmOut') : t('confirmIn');
+executeOp(curOpType, qty, name, document.getElementById('opMemo').value);
+});
 }
 
 function executeOp(opType, qty, name, memo){
