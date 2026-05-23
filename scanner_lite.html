@@ -62,8 +62,7 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 .action-btn:active{opacity:.8}
 .btn-icon{font-size:22px;line-height:1}
 .btn-use{background:var(--green-lt);border-color:var(--green);color:var(--green)}
-.btn-undo{background:var(--red-lt);border-color:var(--red);color:var(--red)}
-.btn-undo.off{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.12);color:var(--chalk3);opacity:0.45;pointer-events:none;}
+.btn-stock{background:var(--yellow-lt);border-color:var(--yellow);color:var(--yellow)}
 .qty-header{font-size:14px;font-weight:900;color:var(--yellow);margin-bottom:6px;text-align:center}
 .qty-section{background:var(--card);border-radius:var(--r);padding:8px;border:2px solid var(--border);margin-bottom:6px;text-align:center}
 .qty-label{font-size:11px;color:var(--chalk2);font-weight:900;margin-bottom:6px;letter-spacing:.06em}
@@ -126,11 +125,11 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 <div class="stock-lbl" id="iStockLbl"></div>
 </div>
 <div class="action-btns">
-<button class="action-btn btn-use" id="btnUse" onclick="goQty()">
+<button class="action-btn btn-use" id="btnUse" onclick="goQty('OUT')">
 <span class="btn-icon">📤</span><span id="tUse">使　用</span>
 </button>
-<button class="action-btn btn-undo off" id="btnUndo" onclick="doUndo()">
-<span class="btn-icon">🔄</span><span id="tUndo">取り消し</span>
+<button class="action-btn btn-stock" id="btnStock" onclick="goQty('IN')">
+<span class="btn-icon">📥</span><span id="tStock">補　充</span>
 </button>
 </div>
 <button class="btn-sec" onclick="doRescan()">📷 <span id="tRescan">別のQRを読み込む</span></button>
@@ -143,6 +142,10 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 <div class="item-card">
 <div class="item-name" id="qName"></div>
 <div class="item-cat" id="qCat"></div>
+</div>
+<div style="display:flex;align-items:center;gap:10px;background:var(--card);border-radius:var(--r);padding:8px 12px;border:2px solid var(--border);margin-bottom:6px;">
+<input type="checkbox" id="correctionCheck" style="width:24px;height:24px;accent-color:var(--yellow);cursor:pointer;flex-shrink:0;" onchange="onCorrectionCheck()">
+<label for="correctionCheck" style="font-size:14px;font-weight:900;color:var(--chalk2);cursor:pointer;">訂　正</label>
 </div>
 <div class="qty-section">
 <div class="qty-label" id="tQtyLabel">数　量</div>
@@ -165,16 +168,16 @@ var GAS_URL = 'https://script.google.com/macros/s/AKfycbxrovTrx5M5o5I6gXxcMT-T5Z
 
 // ── 状態 ──
 var curItem = null;
-var lastOp = null;
 var busy = false;
 var curScreen = 'scanner';
+var curOpType = 'OUT';
 var qr = null;
 
 // ── 多言語 ──
 var T = {
-ja: { scan:'QRコードをカメラに向けてください', fetch:'品目を取得中...', use:'使　用', undo:'取り消し', rescan:'📷 別のQRを読み込む', qtyHdr:'📤 使用（出庫）', qty:'数　量', op:'作業者', opPh:'氏名を入力', memo:'メモ（任意）', memoPh:'', confirm:'確定（使用）', back:'戻る', stockLbl:'現在庫（最低在庫: ', ok:'使用 ', done:' 完了', undoOk:'取り消し 完了', errQty:'数量を入力してください', errName:'作業者名を入力してください', errConn:'通信エラー', processing:'処理中...' },
-vi: { scan:'Hướng camera vào mã QR', fetch:'Đang tải...', use:'Sử dụng', undo:'Hoàn tác', rescan:'📷 Quét mã QR khác', qtyHdr:'📤 Sử dụng (Xuất kho)', qty:'Số lượng', op:'Người thực hiện', opPh:'Nhập tên', memo:'Ghi chú (tùy chọn)', memoPh:'', confirm:'Xác nhận', back:'Quay lại', stockLbl:'Tồn kho (Tối thiểu: ', ok:'Sử dụng ', done:' xong', undoOk:'Hoàn tác xong', errQty:'Nhập số lượng', errName:'Nhập tên', errConn:'Lỗi kết nối', processing:'Đang xử lý...' },
-id: { scan:'Arahkan kamera ke kode QR', fetch:'Memuat...', use:'Digunakan', undo:'Batalkan', rescan:'📷 Pindai QR lain', qtyHdr:'📤 Digunakan (Keluar)', qty:'Jumlah', op:'Pekerja', opPh:'Masukkan nama', memo:'Catatan (opsional)', memoPh:'', confirm:'Konfirmasi', back:'Kembali', stockLbl:'Stok (Minimum: ', ok:'Digunakan ', done:' selesai', undoOk:'Pembatalan berhasil', errQty:'Masukkan jumlah', errName:'Masukkan nama', errConn:'Kesalahan koneksi', processing:'Memproses...' }
+ja: { scan:'QRコードをカメラに向けてください', fetch:'品目を取得中...', use:'使　用', stock:'補　充', rescan:'📷 別のQRを読み込む', qtyHdr:'📤 使用（出庫）', qtyHdrStock:'📥 補充（入庫）', qty:'数　量', op:'作業者', opPh:'氏名を入力', memo:'メモ（任意）', memoPh:'', confirm:'確定（使用）', confirmStock:'確定（補充）', back:'戻る', stockLbl:'現在庫（最低在庫: ', ok:'使用 ', okStock:'補充 ', done:' 完了', errQty:'数量を入力してください', errName:'作業者名を入力してください', errConn:'通信エラー', processing:'処理中...' },
+vi: { scan:'Hướng camera vào mã QR', fetch:'Đang tải...', use:'Sử dụng', stock:'Bổ sung', rescan:'📷 Quét mã QR khác', qtyHdr:'📤 Sử dụng (Xuất kho)', qtyHdrStock:'📥 Bổ sung (Nhập kho)', qty:'Số lượng', op:'Người thực hiện', opPh:'Nhập tên', memo:'Ghi chú (tùy chọn)', memoPh:'', confirm:'Xác nhận (Dùng)', confirmStock:'Xác nhận (Bổ sung)', back:'Quay lại', stockLbl:'Tồn kho (Tối thiểu: ', ok:'Sử dụng ', okStock:'Bổ sung ', done:' xong', errQty:'Nhập số lượng', errName:'Nhập tên', errConn:'Lỗi kết nối', processing:'Đang xử lý...' },
+id: { scan:'Arahkan kamera ke kode QR', fetch:'Memuat...', use:'Digunakan', stock:'Isi ulang', rescan:'📷 Pindai QR lain', qtyHdr:'📤 Digunakan (Keluar)', qtyHdrStock:'📥 Isi ulang (Masuk)', qty:'Jumlah', op:'Pekerja', opPh:'Masukkan nama', memo:'Catatan (opsional)', memoPh:'', confirm:'Konfirmasi (Pakai)', confirmStock:'Konfirmasi (Isi)', back:'Kembali', stockLbl:'Stok (Minimum: ', ok:'Digunakan ', okStock:'Isi ulang ', done:' selesai', errQty:'Masukkan jumlah', errName:'Masukkan nama', errConn:'Kesalahan koneksi', processing:'Memproses...' }
 };
 var lang = 'ja';
 
@@ -211,15 +214,13 @@ show(curScreen);
 function applyLang(){
 document.getElementById('scanMsg').textContent = t('scan');
 document.getElementById('tUse').textContent = t('use');
-document.getElementById('tUndo').textContent = t('undo');
+document.getElementById('tStock').textContent = t('stock');
 document.getElementById('tRescan').textContent = t('rescan');
-document.getElementById('tQtyHeader').textContent= t('qtyHdr');
 document.getElementById('tQtyLabel').textContent = t('qty');
 document.getElementById('tOperator').textContent = t('op');
 document.getElementById('opName').placeholder = t('opPh');
 document.getElementById('tMemo').textContent = t('memo');
 document.getElementById('opMemo').placeholder = t('memoPh');
-document.getElementById('tConfirm').textContent = t('confirm');
 document.getElementById('tBack').textContent = t('back');
 }
 
@@ -263,7 +264,7 @@ showItem();
 }
 
 function showItem(){
-busy = false; // ★ 必ずリセット
+busy = false;
 var cur = Number(curItem['現在庫']), min = Number(curItem['最低在庫']);
 document.getElementById('iName').textContent = curItem['品目名'];
 document.getElementById('iCat').textContent = curItem['カテゴリ名'] || curItem['カテゴリID'];
@@ -271,26 +272,36 @@ document.getElementById('iStock').textContent = cur;
 document.getElementById('iStockLbl').textContent = t('stockLbl') + min + '）';
 var isLow = cur <= min, isWarn = !isLow && cur <= min * 1.2 && min > 0;
 document.getElementById('iStockBox').className = 'stock-box' + (isLow ? ' danger' : isWarn ? ' warn' : '');
-// 取り消しボタン
-var btnUndo = document.getElementById('btnUndo');
-if(lastOp){ btnUndo.classList.remove('off'); }
-else{ btnUndo.classList.add('off'); }
-document.getElementById('tUndo').textContent = t('undo');
 show('item');
 }
 
-function goQty(){
+function goQty(opType){
 if(busy) return;
+curOpType = opType || 'OUT';
+var isUse = curOpType === 'OUT';
 document.getElementById('qName').textContent = curItem['品目名'];
 document.getElementById('qCat').textContent = curItem['カテゴリ名'] || curItem['カテゴリID'];
-document.getElementById('tQtyHeader').textContent = t('qtyHdr');
-document.getElementById('tConfirm').textContent = t('confirm');
+document.getElementById('tQtyHeader').textContent = isUse ? t('qtyHdr') : t('qtyHdrStock');
+document.getElementById('tConfirm').textContent = isUse ? t('confirm') : t('confirmStock');
 var btn = document.getElementById('btnConfirm');
 btn.disabled = false;
+btn.className = 'btn-primary ' + (isUse ? 'btn-confirm' : 'btn-confirm-stock');
 document.getElementById('qtyInput').value = '1';
 document.getElementById('opMemo').value = '';
+document.getElementById('correctionCheck').checked = false;
 document.getElementById('opName').value = loadName();
 show('qty');
+}
+
+function onCorrectionCheck(){
+var chk = document.getElementById('correctionCheck');
+var memo = document.getElementById('opMemo');
+if(!chk || !memo) return;
+if(chk.checked){
+if(!memo.value) memo.value = '入力ミスによる訂正';
+} else {
+if(memo.value === '入力ミスによる訂正') memo.value = '';
+}
 }
 
 function goItem(){ show('item'); }
@@ -318,47 +329,21 @@ busy = true;
 var btn = document.getElementById('btnConfirm');
 btn.disabled = true;
 document.getElementById('tConfirm').textContent = t('processing');
+var isUse = curOpType === 'OUT';
 fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'stockOperation', op: {
-id: curItem['品目ID'], type: 'OUT', qty: qty, operator: name, memo: document.getElementById('opMemo').value
+id: curItem['品目ID'], type: curOpType, qty: qty, operator: name, memo: document.getElementById('opMemo').value
 }})})
 .then(function(r){ return r.json(); })
 .then(function(d){
 busy = false;
-if(d.error){ toast(d.error, 'err'); btn.disabled = false; document.getElementById('tConfirm').textContent = t('confirm'); return; }
-lastOp = { id: curItem['品目ID'], qty: qty, operator: name };
-toast(t('ok') + qty + t('done'), 'ok');
-setTimeout(showItem, 2000);
-})
-.catch(function(){
-busy = false;
-btn.disabled = false;
-document.getElementById('tConfirm').textContent = t('confirm');
-toast(t('errConn'), 'err');
-});
-}
-
-function doUndo(){
-if(busy || !lastOp) return;
-busy = true;
-var btnUndo = document.getElementById('btnUndo');
-btnUndo.classList.add('off');
-document.getElementById('tUndo').textContent = t('processing');
-fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'stockOperation', op: {
-id: lastOp.id, type: 'IN', qty: lastOp.qty, operator: lastOp.operator, memo: '【取り消し】'
-}})})
-.then(function(r){ return r.json(); })
-.then(function(d){
-busy = false;
-document.getElementById('tUndo').textContent = t('undo');
-if(d.error){ btnUndo.classList.remove('off'); toast(d.error, 'err'); return; }
-lastOp = null;
-toast(t('undoOk'), 'ok');
+if(d.error){ toast(d.error, 'err'); btn.disabled = false; document.getElementById('tConfirm').textContent = isUse ? t('confirm') : t('confirmStock'); return; }
+toast((isUse ? t('ok') : t('okStock')) + qty + t('done'), 'ok');
 setTimeout(doRescan, 2000);
 })
 .catch(function(){
 busy = false;
-btnUndo.classList.remove('off');
-document.getElementById('tUndo').textContent = t('undo');
+btn.disabled = false;
+document.getElementById('tConfirm').textContent = isUse ? t('confirm') : t('confirmStock');
 toast(t('errConn'), 'err');
 });
 }
