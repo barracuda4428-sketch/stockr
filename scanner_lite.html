@@ -77,6 +77,7 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 .btn-primary{width:100%;padding:10px;border-radius:var(--r-sm);margin-top:4px;border:none;font-family:inherit;font-size:15px;font-weight:900;cursor:pointer;transition:opacity .15s}
 .btn-primary:active{opacity:.8}
 .btn-confirm{background:var(--green);color:var(--bg)}
+.btn-confirm-stock{background:var(--yellow);color:var(--bg)}
 .btn-sec{width:100%;padding:8px;border-radius:var(--r-sm);margin-top:4px;background:transparent;border:2px solid var(--border);color:var(--chalk2);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
 .toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;border-radius:12px;padding:14px 24px;font-size:22px;font-weight:900;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow);text-align:center;}
 .toast.ok{background:var(--green);color:var(--bg)}
@@ -145,7 +146,7 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 </div>
 <div style="display:flex;align-items:center;gap:10px;background:var(--card);border-radius:var(--r);padding:8px 12px;border:2px solid var(--border);margin-bottom:6px;">
 <input type="checkbox" id="correctionCheck" style="width:24px;height:24px;accent-color:var(--yellow);cursor:pointer;flex-shrink:0;" onchange="onCorrectionCheck()">
-<label for="correctionCheck" style="font-size:14px;font-weight:900;color:var(--chalk2);cursor:pointer;">訂　正</label>
+<label for="correctionCheck" id="tCorrection" style="font-size:21px;font-weight:900;color:var(--yellow);cursor:pointer;">訂正する</label>
 </div>
 <div class="qty-section">
 <div class="qty-label" id="tQtyLabel">数　量</div>
@@ -175,9 +176,9 @@ var qr = null;
 
 // ── 多言語 ──
 var T = {
-ja: { scan:'QRコードをカメラに向けてください', fetch:'品目を取得中...', use:'使　用', stock:'補　充', rescan:'📷 別のQRを読み込む', qtyHdr:'📤 使用（出庫）', qtyHdrStock:'📥 補充（入庫）', qty:'数　量', op:'作業者', opPh:'氏名を入力', memo:'メモ（任意）', memoPh:'', confirm:'確定（使用）', confirmStock:'確定（補充）', back:'戻る', stockLbl:'現在庫（最低在庫: ', ok:'使用 ', okStock:'補充 ', done:' 完了', errQty:'数量を入力してください', errName:'作業者名を入力してください', errConn:'通信エラー', processing:'処理中...' },
-vi: { scan:'Hướng camera vào mã QR', fetch:'Đang tải...', use:'Sử dụng', stock:'Bổ sung', rescan:'📷 Quét mã QR khác', qtyHdr:'📤 Sử dụng (Xuất kho)', qtyHdrStock:'📥 Bổ sung (Nhập kho)', qty:'Số lượng', op:'Người thực hiện', opPh:'Nhập tên', memo:'Ghi chú (tùy chọn)', memoPh:'', confirm:'Xác nhận (Dùng)', confirmStock:'Xác nhận (Bổ sung)', back:'Quay lại', stockLbl:'Tồn kho (Tối thiểu: ', ok:'Sử dụng ', okStock:'Bổ sung ', done:' xong', errQty:'Nhập số lượng', errName:'Nhập tên', errConn:'Lỗi kết nối', processing:'Đang xử lý...' },
-id: { scan:'Arahkan kamera ke kode QR', fetch:'Memuat...', use:'Digunakan', stock:'Isi ulang', rescan:'📷 Pindai QR lain', qtyHdr:'📤 Digunakan (Keluar)', qtyHdrStock:'📥 Isi ulang (Masuk)', qty:'Jumlah', op:'Pekerja', opPh:'Masukkan nama', memo:'Catatan (opsional)', memoPh:'', confirm:'Konfirmasi (Pakai)', confirmStock:'Konfirmasi (Isi)', back:'Kembali', stockLbl:'Stok (Minimum: ', ok:'Digunakan ', okStock:'Isi ulang ', done:' selesai', errQty:'Masukkan jumlah', errName:'Masukkan nama', errConn:'Kesalahan koneksi', processing:'Memproses...' }
+ja: { scan:'QRコードをカメラに向けてください', fetch:'品目を取得中...', use:'使　用', stock:'補　充', rescan:'📷 別のQRを読み込む', qtyHdr:'📤 使用（出庫）', qtyHdrStock:'📥 補充（入庫）', qty:'数　量', op:'作業者', opPh:'氏名を入力', memo:'メモ（任意）', memoPh:'', confirm:'確定（使用）', confirmStock:'確定（補充）', correction:'訂正する', back:'戻る', stockLbl:'現在庫（最低在庫: ', ok:'使用 ', okStock:'補充 ', done:' 完了', errQty:'数量を入力してください', errName:'作業者名を入力してください', errConn:'通信エラー', processing:'処理中...' },
+vi: { scan:'Hướng camera vào mã QR', fetch:'Đang tải...', use:'Sử dụng', stock:'Bổ sung', rescan:'📷 Quét mã QR khác', qtyHdr:'📤 Sử dụng (Xuất kho)', qtyHdrStock:'📥 Bổ sung (Nhập kho)', qty:'Số lượng', op:'Người thực hiện', opPh:'Nhập tên', memo:'Ghi chú (tùy chọn)', memoPh:'', confirm:'Xác nhận (Dùng)', confirmStock:'Xác nhận (Bổ sung)', correction:'Sửa lỗi', back:'Quay lại', stockLbl:'Tồn kho (Tối thiểu: ', ok:'Sử dụng ', okStock:'Bổ sung ', done:' xong', errQty:'Nhập số lượng', errName:'Nhập tên', errConn:'Lỗi kết nối', processing:'Đang xử lý...' },
+id: { scan:'Arahkan kamera ke kode QR', fetch:'Memuat...', use:'Digunakan', stock:'Isi ulang', rescan:'📷 Pindai QR lain', qtyHdr:'📤 Digunakan (Keluar)', qtyHdrStock:'📥 Isi ulang (Masuk)', qty:'Jumlah', op:'Pekerja', opPh:'Masukkan nama', memo:'Catatan (opsional)', memoPh:'', confirm:'Konfirmasi (Pakai)', confirmStock:'Konfirmasi (Isi)', correction:'Koreksi', back:'Kembali', stockLbl:'Stok (Minimum: ', ok:'Digunakan ', okStock:'Isi ulang ', done:' selesai', errQty:'Masukkan jumlah', errName:'Masukkan nama', errConn:'Kesalahan koneksi', processing:'Memproses...' }
 };
 var lang = 'ja';
 
@@ -221,6 +222,7 @@ document.getElementById('tOperator').textContent = t('op');
 document.getElementById('opName').placeholder = t('opPh');
 document.getElementById('tMemo').textContent = t('memo');
 document.getElementById('opMemo').placeholder = t('memoPh');
+document.getElementById('tCorrection').textContent = t('correction');
 document.getElementById('tBack').textContent = t('back');
 }
 
