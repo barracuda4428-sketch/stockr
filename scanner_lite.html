@@ -133,7 +133,7 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 <span class="btn-icon">📥</span><span id="tStock">補　充</span>
 </button>
 </div>
-<button class="btn-sec" onclick="doRescan()">📷 <span id="tRescan">別のQRを読み込む</span></button>
+<button class="btn-sec" onclick="doRescan()"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#e3e3e3" style="vertical-align:middle;margin-right:6px;"><path d="M480-240q79 0 136-53.5T678-426l30 28 42-42-100-100-100 100 42 42 26-26q-6 53-45 88.5T480-300q-13 0-25.5-2.5T430-310l-44 44q22 12 45.5 19t48.5 7ZM310-340l100-100-42-42-26 26q6-53 45-88.5t93-35.5q13 0 25.5 2.5T530-570l44-44q-22-12-45.5-19t-48.5-7q-79 0-136 53.5T282-454l-30-28-42 42 100 100ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z"/></svg><span id="tRescan">別のQRを読み込む</span></button>
 </div>
 
 <!-- 数量入力画面 -->
@@ -182,9 +182,9 @@ var qr = null;
 
 // ── 多言語 ──
 var T = {
-ja: { scan:'QRコードをカメラに向けてください', fetch:'品目を取得中...', use:'使　用', stock:'補　充', rescan:'📷 別のQRを読み込む', qtyHdr:'📤 使用（出庫）', qtyHdrStock:'📥 補充（入庫）', qty:'数　量', op:'作業者', opPh:'氏名を入力', memo:'メモ（任意）', memoPh:'', confirm:'確定（使用）', confirmStock:'確定（補充）', correction:'訂正する', back:'戻る', stockLbl:'現在庫（最低在庫: ', ok:'使用 ', okStock:'補充 ', done:' 完了', errQty:'数量を入力してください', errName:'作業者名を入力してください', errConn:'通信エラー', processing:'処理中...' },
-vi: { scan:'Hướng camera vào mã QR', fetch:'Đang tải...', use:'Sử dụng', stock:'Bổ sung', rescan:'📷 Quét mã QR khác', qtyHdr:'📤 Sử dụng (Xuất kho)', qtyHdrStock:'📥 Bổ sung (Nhập kho)', qty:'Số lượng', op:'Người thực hiện', opPh:'Nhập tên', memo:'Ghi chú (tùy chọn)', memoPh:'', confirm:'Xác nhận (Dùng)', confirmStock:'Xác nhận (Bổ sung)', correction:'Sửa lỗi', back:'Quay lại', stockLbl:'Tồn kho (Tối thiểu: ', ok:'Sử dụng ', okStock:'Bổ sung ', done:' xong', errQty:'Nhập số lượng', errName:'Nhập tên', errConn:'Lỗi kết nối', processing:'Đang xử lý...' },
-id: { scan:'Arahkan kamera ke kode QR', fetch:'Memuat...', use:'Digunakan', stock:'Isi ulang', rescan:'📷 Pindai QR lain', qtyHdr:'📤 Digunakan (Keluar)', qtyHdrStock:'📥 Isi ulang (Masuk)', qty:'Jumlah', op:'Pekerja', opPh:'Masukkan nama', memo:'Catatan (opsional)', memoPh:'', confirm:'Konfirmasi (Pakai)', confirmStock:'Konfirmasi (Isi)', correction:'Koreksi', back:'Kembali', stockLbl:'Stok (Minimum: ', ok:'Digunakan ', okStock:'Isi ulang ', done:' selesai', errQty:'Masukkan jumlah', errName:'Masukkan nama', errConn:'Kesalahan koneksi', processing:'Memproses...' }
+ja: { scan:'QRコードをカメラに向けてください', fetch:'品目を取得中...', use:'使　用', stock:'補　充', rescan:'別のQRを読み込む', qtyHdr:'📤 使用（出庫）', qtyHdrStock:'📥 補充（入庫）', qty:'数　量', op:'作業者', opPh:'氏名を入力', memo:'メモ（任意）', memoPh:'', confirm:'確定（使用）', confirmStock:'確定（補充）', correction:'訂正する', back:'戻る', stockLbl:'現在庫（最低在庫: ', ok:'使用 ', okStock:'補充 ', done:' 完了', errQty:'数量を入力してください', errName:'作業者名を入力してください', errConn:'通信エラー', processing:'処理中...' },
+vi: { scan:'Hướng camera vào mã QR', fetch:'Đang tải...', use:'Sử dụng', stock:'Bổ sung', rescan:'Quét mã QR khác', qtyHdr:'📤 Sử dụng (Xuất kho)', qtyHdrStock:'📥 Bổ sung (Nhập kho)', qty:'Số lượng', op:'Người thực hiện', opPh:'Nhập tên', memo:'Ghi chú (tùy chọn)', memoPh:'', confirm:'Xác nhận (Dùng)', confirmStock:'Xác nhận (Bổ sung)', correction:'Sửa lỗi', back:'Quay lại', stockLbl:'Tồn kho (Tối thiểu: ', ok:'Sử dụng ', okStock:'Bổ sung ', done:' xong', errQty:'Nhập số lượng', errName:'Nhập tên', errConn:'Lỗi kết nối', processing:'Đang xử lý...' },
+id: { scan:'Arahkan kamera ke kode QR', fetch:'Memuat...', use:'Digunakan', stock:'Isi ulang', rescan:'Pindai QR lain', qtyHdr:'📤 Digunakan (Keluar)', qtyHdrStock:'📥 Isi ulang (Masuk)', qty:'Jumlah', op:'Pekerja', opPh:'Masukkan nama', memo:'Catatan (opsional)', memoPh:'', confirm:'Konfirmasi (Pakai)', confirmStock:'Konfirmasi (Isi)', correction:'Koreksi', back:'Kembali', stockLbl:'Stok (Minimum: ', ok:'Digunakan ', okStock:'Isi ulang ', done:' selesai', errQty:'Masukkan jumlah', errName:'Masukkan nama', errConn:'Kesalahan koneksi', processing:'Memproses...' }
 };
 var lang = 'ja';
 
@@ -315,13 +315,13 @@ if(isOn){
 btn.dataset.on = '0';
 btn.style.background = 'transparent';
 btn.style.color = 'var(--yellow)';
-if(memo && memo.value === '入力ミスによる訂正') memo.value = '';
+if(memo && memo.value === '【訂正理由】誤入力につき訂正') memo.value = '';
 if(scanBtn) scanBtn.style.display = '';
 } else {
 btn.dataset.on = '1';
 btn.style.background = 'var(--yellow)';
 btn.style.color = 'var(--bg)';
-if(memo && !memo.value) memo.value = '入力ミスによる訂正';
+if(memo && !memo.value) memo.value = '【訂正理由】誤入力につき訂正';
 if(scanBtn) scanBtn.style.display = 'none';
 }
 }
