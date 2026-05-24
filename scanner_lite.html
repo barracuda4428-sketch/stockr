@@ -223,12 +223,14 @@ document.getElementById('scanMsg').textContent = t('scan');
 document.getElementById('tUse').textContent = t('use');
 document.getElementById('tStock').textContent = t('stock');
 document.getElementById('tRescan').textContent = t('rescan');
+document.getElementById('tQtyHeader').textContent = curOpType==='OUT' ? t('qtyHdr') : t('qtyHdrStock');
 document.getElementById('tQtyLabel').textContent = t('qty');
 document.getElementById('tOperator').textContent = t('op');
 document.getElementById('opName').placeholder = t('opPh');
 document.getElementById('tMemo').textContent = t('memo');
 document.getElementById('opMemo').placeholder = t('memoPh');
 document.getElementById('tCorrection').textContent = t('correction');
+document.getElementById('tConfirm').textContent = curOpType==='OUT' ? t('confirm') : t('confirmStock');
 document.getElementById('tBack').textContent = t('back');
 }
 
@@ -315,13 +317,13 @@ if(isOn){
 btn.dataset.on = '0';
 btn.style.background = 'transparent';
 btn.style.color = 'var(--yellow)';
-if(memo && memo.value === '【訂正理由】誤入力につき訂正') memo.value = '';
+if(memo && memo.value === '誤入力につき訂正') memo.value = '';
 if(scanBtn) scanBtn.style.display = '';
 } else {
 btn.dataset.on = '1';
 btn.style.background = 'var(--yellow)';
 btn.style.color = 'var(--bg)';
-if(memo && !memo.value) memo.value = '【訂正理由】誤入力につき訂正';
+if(memo && !memo.value) memo.value = '誤入力につき訂正';
 if(scanBtn) scanBtn.style.display = 'none';
 }
 }
@@ -404,8 +406,12 @@ var btn = document.getElementById('btnConfirm');
 btn.disabled = true;
 document.getElementById('tConfirm').textContent = t('processing');
 var isUse = curOpType === 'OUT';
+var rawMemo = document.getElementById('opMemo').value;
+var corrBtn = document.getElementById('correctionBtn');
+var isCorr = corrBtn && corrBtn.dataset.on === '1';
+var finalMemo = isCorr ? '【訂正】' + rawMemo : rawMemo;
 fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'stockOperation', op: {
-id: curItem['品目ID'], type: curOpType, qty: qty, operator: name, memo: document.getElementById('opMemo').value
+id: curItem['品目ID'], type: curOpType, qty: qty, operator: name, memo: finalMemo
 }})})
 .then(function(r){ return r.json(); })
 .then(function(d){
