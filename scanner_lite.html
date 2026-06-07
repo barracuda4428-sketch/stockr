@@ -37,7 +37,7 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 /* 言語選択 */
 #langArea{display:none;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;}
 .lang-title{font-size:16px;font-weight:900;color:var(--chalk3);margin-bottom:4px;text-align:center}
-.lang-opt{width:90%;max-width:320px;padding:12px;border-radius:var(--r);border:2px solid var(--border);background:var(--card);display:flex;align-items:center;gap:12px;font-size:18px;font-weight:900;color:var(--chalk);}
+.lang-opt{width:90%;max-width:320px;padding:12px;border-radius:var(--r);border:2px solid var(--border);background:var(--card);display:flex;align-items:center;gap:12px;font-size:18px;font-weight:900;color:var(--chalk);cursor:pointer;}
 
 /* スキャナー */
 #scannerArea{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;justify-content:center;overflow:hidden}
@@ -131,7 +131,7 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 <button class="action-btn btn-use" id="btnUse" onclick="goQty('OUT')">
 <span class="btn-icon">📤</span><span id="tUse">使　用</span>
 </button>
-<button class="action-btn btn-correct" id="btnCorrect" onclick="onCorrectionToggle()">
+<button class="action-btn btn-correct" id="btnCorrect" data-on="0" onclick="onCorrectionToggle()">
 <span class="btn-icon"><svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="currentColor"><path d="M396-200q-97 0-166.5-63T160-420q0-94 69.5-157T396-640h252L544-744l56-56 200 200-200 200-56-56 104-104H396q-63 0-109.5 40T240-420q0 60 46.5 100T396-280h284v80H396Z"/></svg></span><span id="tCorrect">訂正</span>
 </button>
 <button class="action-btn btn-stock" id="btnStock" onclick="goQty('IN')">
@@ -284,6 +284,14 @@ document.getElementById('iStock').textContent = cur;
 document.getElementById('iStockLbl').textContent = t('stockLbl') + min + '）';
 var isLow = cur <= min, isWarn = !isLow && cur <= min * 1.2 && min > 0;
 document.getElementById('iStockBox').className = 'stock-box' + (isLow ? ' danger' : isWarn ? ' warn' : '');
+// 訂正ボタンリセット
+var corrBtn = document.getElementById('btnCorrect');
+if(corrBtn){
+corrBtn.dataset.on = '0';
+corrBtn.style.background = 'rgba(223,147,32,0.15)';
+corrBtn.style.color = '#df9320';
+corrBtn.style.borderColor = '#df9320';
+}
 show('item');
 }
 
