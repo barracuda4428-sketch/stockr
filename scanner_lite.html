@@ -324,25 +324,8 @@ btn.style.borderColor = '#df9320';
 }
 }
 
-function onCorrectionToggle(){
-var btn = document.getElementById('correctionBtn');
-var memo = document.getElementById('opMemo');
-var scanBtn = document.getElementById('memoScanBtn');
-var isOn = btn.dataset.on === '1';
-if(isOn){
-btn.dataset.on = '0';
-btn.style.background = 'transparent';
-btn.style.color = 'var(--yellow)';
-if(memo && memo.value === '誤入力につき訂正') memo.value = '';
-if(scanBtn) scanBtn.style.display = '';
-} else {
-btn.dataset.on = '1';
-btn.style.background = 'var(--yellow)';
-btn.style.color = 'var(--bg)';
-if(memo && !memo.value) memo.value = '誤入力につき訂正';
-if(scanBtn) scanBtn.style.display = 'none';
-}
-}
+
+
 
 var memoQr = null;
 
