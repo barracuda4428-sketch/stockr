@@ -57,13 +57,12 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 .stock-box.danger .stock-big{color:var(--red)}
 .stock-box.warn .stock-big{color:var(--yellow)}
 .stock-lbl{font-size:11px;color:var(--chalk3);margin-top:2px;font-weight:700}
-.action-btns{display:grid;grid-template-columns:1fr 0.5fr 1fr;gap:6px;margin-bottom:6px}
+.action-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}
 .action-btn{border-radius:var(--r);padding:10px 6px;font-family:inherit;font-size:16px;font-weight:900;cursor:pointer;border:2px solid;display:flex;flex-direction:column;align-items:center;gap:4px;transition:opacity .15s}
 .action-btn:active{opacity:.8}
 .btn-icon{font-size:22px;line-height:1}
 .btn-use{background:var(--green-lt);border-color:var(--green);color:var(--green)}
 .btn-stock{background:var(--yellow-lt);border-color:var(--yellow);color:var(--yellow)}
-.btn-correct{background:rgba(223,147,32,0.15);border-color:#df9320;color:#df9320}
 .qty-header{font-size:14px;font-weight:900;color:var(--yellow);margin-bottom:6px;text-align:center}
 .qty-section{background:var(--card);border-radius:var(--r);padding:8px;border:2px solid var(--border);margin-bottom:6px;text-align:center}
 .qty-label{font-size:11px;color:var(--chalk2);font-weight:900;margin-bottom:6px;letter-spacing:.06em}
@@ -79,7 +78,6 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 .btn-primary:active{opacity:.8}
 .btn-confirm{background:var(--green);color:var(--bg)}
 .btn-confirm-stock{background:var(--yellow);color:var(--bg)}
-.btn-confirm-correct{background:#df9320;color:#fff}
 .btn-sec{width:100%;padding:8px;border-radius:var(--r-sm);margin-top:4px;background:transparent;border:2px solid var(--border);color:var(--chalk2);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
 .toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;border-radius:12px;padding:14px 24px;font-size:22px;font-weight:900;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow);text-align:center;}
 .toast.ok{background:var(--green);color:var(--bg)}
@@ -131,9 +129,6 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 <button class="action-btn btn-use" id="btnUse" onclick="goQty('OUT')">
 <span class="btn-icon">📤</span><span id="tUse">使　用</span>
 </button>
-<button class="action-btn btn-correct" id="btnCorrect" onclick="onCorrectionToggle()">
-<span class="btn-icon"><svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="currentColor"><path d="M396-200q-97 0-166.5-63T160-420q0-94 69.5-157T396-640h252L544-744l56-56 200 200-200 200-56-56 104-104H396q-63 0-109.5 40T240-420q0 60 46.5 100T396-280h284v80H396Z"/></svg></span><span id="tCorrect">訂正</span>
-</button>
 <button class="action-btn btn-stock" id="btnStock" onclick="goQty('IN')">
 <span class="btn-icon">📥</span><span id="tStock">補　充</span>
 </button>
@@ -148,6 +143,9 @@ padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:6px;flex-
 <div class="item-card">
 <div class="item-name" id="qName"></div>
 <div class="item-cat" id="qCat"></div>
+</div>
+<div style="display:flex;justify-content:center;margin-bottom:6px;">
+<button id="correctionBtn" onclick="onCorrectionToggle()" style="width:70%;border-radius:999px;padding:6px 0;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;border:1px solid var(--yellow);background:transparent;color:var(--yellow);text-align:center;transition:all .15s;"><span id="tCorrection">訂正する</span></button>
 </div>
 <div class="qty-section">
 <div class="qty-label" id="tQtyLabel">数　量</div>
@@ -184,9 +182,9 @@ var qr = null;
 
 // ── 多言語 ──
 var T = {
-ja: { scan:'QRコードをカメラに向けてください', fetch:'品目を取得中...', use:'使　用', stock:'補　充', correct:'訂正', rescan:'別のQRを読み込む', qtyHdr:'📤 使用（出庫）', qtyHdrStock:'📥 補充（入庫）', qty:'数　量', op:'作業者', opPh:'氏名を入力', memo:'メモ（任意）', memoPh:'', confirm:'確定（使用）', confirmStock:'確定（補充）', correction:'訂正する', back:'戻る', stockLbl:'現在庫（最低在庫: ', ok:'使用 ', okStock:'補充 ', done:' 完了', errQty:'数量を入力してください', errName:'作業者名を入力してください', errConn:'通信エラー', processing:'処理中...' },
-vi: { scan:'Hướng camera vào mã QR', fetch:'Đang tải...', use:'Sử dụng', stock:'Bổ sung', correct:'Sửa lỗi', rescan:'Quét mã QR khác', qtyHdr:'📤 Sử dụng (Xuất kho)', qtyHdrStock:'📥 Bổ sung (Nhập kho)', qty:'Số lượng', op:'Người thực hiện', opPh:'Nhập tên', memo:'Ghi chú (tùy chọn)', memoPh:'', confirm:'Xác nhận (Dùng)', confirmStock:'Xác nhận (Bổ sung)', correction:'Sửa lỗi', back:'Quay lại', stockLbl:'Tồn kho (Tối thiểu: ', ok:'Sử dụng ', okStock:'Bổ sung ', done:' xong', errQty:'Nhập số lượng', errName:'Nhập tên', errConn:'Lỗi kết nối', processing:'Đang xử lý...' },
-id: { scan:'Arahkan kamera ke kode QR', fetch:'Memuat...', use:'Digunakan', stock:'Isi ulang', correct:'Koreksi', rescan:'Pindai QR lain', qtyHdr:'📤 Digunakan (Keluar)', qtyHdrStock:'📥 Isi ulang (Masuk)', qty:'Jumlah', op:'Pekerja', opPh:'Masukkan nama', memo:'Catatan (opsional)', memoPh:'', confirm:'Konfirmasi (Pakai)', confirmStock:'Konfirmasi (Isi)', correction:'Koreksi', back:'Kembali', stockLbl:'Stok (Minimum: ', ok:'Digunakan ', okStock:'Isi ulang ', done:' selesai', errQty:'Masukkan jumlah', errName:'Masukkan nama', errConn:'Kesalahan koneksi', processing:'Memproses...' }
+ja: { scan:'QRコードをカメラに向けてください', fetch:'品目を取得中...', use:'使　用', stock:'補　充', rescan:'別のQRを読み込む', qtyHdr:'📤 使用（出庫）', qtyHdrStock:'📥 補充（入庫）', qty:'数　量', op:'作業者', opPh:'氏名を入力', memo:'メモ（任意）', memoPh:'', confirm:'確定（使用）', confirmStock:'確定（補充）', correction:'訂正する', back:'戻る', stockLbl:'現在庫（最低在庫: ', ok:'使用 ', okStock:'補充 ', done:' 完了', errQty:'数量を入力してください', errName:'作業者名を入力してください', errConn:'通信エラー', processing:'処理中...' },
+vi: { scan:'Hướng camera vào mã QR', fetch:'Đang tải...', use:'Sử dụng', stock:'Bổ sung', rescan:'Quét mã QR khác', qtyHdr:'📤 Sử dụng (Xuất kho)', qtyHdrStock:'📥 Bổ sung (Nhập kho)', qty:'Số lượng', op:'Người thực hiện', opPh:'Nhập tên', memo:'Ghi chú (tùy chọn)', memoPh:'', confirm:'Xác nhận (Dùng)', confirmStock:'Xác nhận (Bổ sung)', correction:'Sửa lỗi', back:'Quay lại', stockLbl:'Tồn kho (Tối thiểu: ', ok:'Sử dụng ', okStock:'Bổ sung ', done:' xong', errQty:'Nhập số lượng', errName:'Nhập tên', errConn:'Lỗi kết nối', processing:'Đang xử lý...' },
+id: { scan:'Arahkan kamera ke kode QR', fetch:'Memuat...', use:'Digunakan', stock:'Isi ulang', rescan:'Pindai QR lain', qtyHdr:'📤 Digunakan (Keluar)', qtyHdrStock:'📥 Isi ulang (Masuk)', qty:'Jumlah', op:'Pekerja', opPh:'Masukkan nama', memo:'Catatan (opsional)', memoPh:'', confirm:'Konfirmasi (Pakai)', confirmStock:'Konfirmasi (Isi)', correction:'Koreksi', back:'Kembali', stockLbl:'Stok (Minimum: ', ok:'Digunakan ', okStock:'Isi ulang ', done:' selesai', errQty:'Masukkan jumlah', errName:'Masukkan nama', errConn:'Kesalahan koneksi', processing:'Memproses...' }
 };
 var lang = 'ja';
 
@@ -223,7 +221,6 @@ show(curScreen);
 function applyLang(){
 document.getElementById('scanMsg').textContent = t('scan');
 document.getElementById('tUse').textContent = t('use');
-document.getElementById('tCorrect').textContent = t('correct');
 document.getElementById('tStock').textContent = t('stock');
 document.getElementById('tRescan').textContent = t('rescan');
 document.getElementById('tQtyHeader').textContent = curOpType==='OUT' ? t('qtyHdr') : t('qtyHdrStock');
@@ -292,37 +289,23 @@ function goQty(opType){
 if(busy) return;
 curOpType = opType || 'OUT';
 var isUse = curOpType === 'OUT';
-var isCorr = document.getElementById('btnCorrect') && document.getElementById('btnCorrect').dataset.on === '1';
 document.getElementById('qName').textContent = curItem['品目名'];
 document.getElementById('qCat').textContent = curItem['カテゴリ名'] || curItem['カテゴリID'];
-document.getElementById('tQtyHeader').textContent = isCorr ? (isUse ? '↩📤 訂正（使用）' : '↩📥 訂正（補充）') : (isUse ? t('qtyHdr') : t('qtyHdrStock'));
-document.getElementById('tConfirm').textContent = isCorr ? (isUse ? '確定（訂正・使用）' : '確定（訂正・補充）') : (isUse ? t('confirm') : t('confirmStock'));
+document.getElementById('tQtyHeader').textContent = isUse ? t('qtyHdr') : t('qtyHdrStock');
+document.getElementById('tConfirm').textContent = isUse ? t('confirm') : t('confirmStock');
 var btn = document.getElementById('btnConfirm');
 btn.disabled = false;
-btn.className = 'btn-primary ' + (isCorr ? 'btn-confirm-correct' : (isUse ? 'btn-confirm' : 'btn-confirm-stock'));
+btn.className = 'btn-primary ' + (isUse ? 'btn-confirm' : 'btn-confirm-stock');
 document.getElementById('qtyInput').value = '1';
-document.getElementById('opMemo').value = isCorr ? '誤入力につき訂正' : '';
+document.getElementById('opMemo').value = '';
+var corrBtn = document.getElementById('correctionBtn');
+corrBtn.dataset.on = '0';
+corrBtn.style.background = 'transparent';
+corrBtn.style.color = 'var(--yellow)';
 var memoBtn = document.getElementById('memoScanBtn');
-if(memoBtn) memoBtn.style.display = isCorr ? 'none' : '';
+if(memoBtn) memoBtn.style.display = '';
 document.getElementById('opName').value = loadName();
 show('qty');
-}
-
-function onCorrectionToggle(){
-var btn = document.getElementById('btnCorrect');
-if(!btn) return;
-var isOn = btn.dataset.on === '1';
-if(isOn){
-btn.dataset.on = '0';
-btn.style.background = 'rgba(223,147,32,0.15)';
-btn.style.color = '#df9320';
-btn.style.borderColor = '#df9320';
-} else {
-btn.dataset.on = '1';
-btn.style.background = '#df9320';
-btn.style.color = '#fff';
-btn.style.borderColor = '#df9320';
-}
 }
 
 function onCorrectionToggle(){
@@ -424,7 +407,7 @@ btn.disabled = true;
 document.getElementById('tConfirm').textContent = t('processing');
 var isUse = curOpType === 'OUT';
 var rawMemo = document.getElementById('opMemo').value;
-var corrBtn = document.getElementById('btnCorrect');
+var corrBtn = document.getElementById('correctionBtn');
 var isCorr = corrBtn && corrBtn.dataset.on === '1';
 var finalMemo = isCorr ? '【訂正】' + rawMemo : rawMemo;
 fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'stockOperation', op: {
