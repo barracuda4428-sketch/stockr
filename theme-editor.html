@@ -126,21 +126,85 @@ section.group{
   color:var(--ed-sub);letter-spacing:.08em;border-bottom:1px solid var(--ed-line);
 }
 #previewRoot{
-  padding:16px;
+  padding:0;
   background:var(--bg);
   font-family:'M PLUS 1',sans-serif;
   transition:background .15s;
+  border-radius:0 0 14px 14px;
+  overflow:hidden;
 }
-.pv-topbar{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:14px;
+
+/* ── 実機ヘッダー ── */
+.pv-app-header{
+  background:var(--bg2);border-bottom:2px solid var(--chalk3);
+  padding:12px 16px;display:flex;align-items:center;justify-content:space-between;
 }
-.pv-topbar .pv-title{font-size:15px;font-weight:900;color:var(--chalk);}
-.pv-topbar .pv-sub{font-size:11px;color:var(--chalk3);font-weight:700;margin-top:1px;}
-.pv-badge{
-  font-size:10px;font-weight:900;padding:4px 9px;border-radius:20px;
-  background:var(--yellow-lt);color:var(--yellow);letter-spacing:.03em;
+.pv-logo{font-size:16px;font-weight:400;color:#26b314;letter-spacing:.04em;}
+.pv-logo span{font-size:9px;font-weight:600;color:#65872f;margin-left:6px;letter-spacing:.06em;}
+.pv-update{font-size:10px;color:var(--chalk3);font-weight:600;flex-shrink:0;}
+.pv-menu-bar{
+  background:var(--bg2);border-bottom:2px solid var(--chalk3);
+  padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;
 }
+.pv-menu-toggle{
+  border:1.5px solid var(--chalk3);border-radius:8px;color:var(--chalk);
+  padding:5px 10px;font-size:11px;font-weight:500;display:flex;align-items:center;gap:4px;flex-shrink:0;
+}
+.pv-menu-title{font-size:13px;font-weight:500;color:var(--yellow);flex:1;text-align:center;}
+.pv-menu-icons{font-size:13px;color:var(--chalk);flex-shrink:0;letter-spacing:4px;}
+
+.pv-body-pad{padding:14px 16px 0;}
+
+/* ── 統計サマリー ── */
+.pv-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px 14px 0;}
+.pv-sum-card{
+  background:var(--card);border-radius:12px;padding:11px 6px;
+  border:1.5px solid var(--border);text-align:center;
+}
+.pv-sum-card.active-all{border-color:var(--chalk);background:rgba(255,255,255,.1);}
+.pv-sum-num{font-size:24px;font-weight:900;line-height:1;}
+.pv-sum-num.chalk{color:var(--chalk);}
+.pv-sum-num.blue{color:var(--blue);}
+.pv-sum-num.red{color:var(--red);}
+.pv-sum-lbl{font-size:10px;color:var(--chalk2);margin-top:5px;font-weight:700;}
+
+/* ── カテゴリタブ ── */
+.pv-cat-tabs{display:flex;gap:7px;padding:14px 14px 0;overflow-x:auto;}
+.pv-cat-tab{
+  flex-shrink:0;padding:7px 14px;border-radius:100px;font-size:12px;font-weight:700;
+  border:1.5px solid var(--border);background:var(--card);color:var(--chalk2);white-space:nowrap;
+}
+.pv-cat-tab.active{background:var(--yellow-lt);border-color:var(--yellow);color:var(--yellow);}
+
+.pv-sec{
+  font-size:11px;font-weight:900;letter-spacing:.1em;color:var(--chalk3);
+  padding:16px 14px 9px;
+}
+
+/* ── 品目リスト（一覧形式） ── */
+.pv-list-card{
+  background:var(--card);border-radius:13px;padding:13px 12px;
+  border:1.5px solid var(--border);margin:0 14px 9px;
+  display:flex;align-items:center;gap:11px;position:relative;overflow:hidden;
+}
+.pv-list-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue);}
+.pv-list-card.warn::before{background:var(--yellow);}
+.pv-list-card.low::before{background:var(--red);}
+.pv-list-icon{
+  width:38px;height:38px;border-radius:9px;flex-shrink:0;
+  background:var(--blue-lt);border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+}
+.pv-list-card.warn .pv-list-icon{background:var(--yellow-lt);}
+.pv-list-body{flex:1;min-width:0;}
+.pv-list-name{font-size:13px;font-weight:700;color:var(--chalk);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pv-list-std{font-size:10.5px;color:var(--chalk3);margin-top:2px;font-weight:500;}
+.pv-list-right{text-align:right;flex-shrink:0;}
+.pv-list-stock{font-size:21px;font-weight:900;line-height:1;color:var(--chalk);}
+.pv-list-card.warn .pv-list-stock{color:#f2df0a;}
+.pv-list-min{font-size:10px;color:var(--chalk3);margin-top:3px;font-weight:500;}
+
+.pv-card{margin:14px 14px 0;}
 .pv-card{
   background:var(--card);border:1.5px solid var(--border);
   border-radius:14px;padding:13px 14px;margin-bottom:10px;
@@ -162,7 +226,7 @@ section.group{
 .pv-btn.restock{background:var(--green-lt);color:var(--green);}
 .pv-info-card{
   background:var(--surface);border:1px solid var(--border);
-  border-radius:12px;padding:11px 13px;margin-bottom:10px;
+  border-radius:12px;padding:11px 13px;margin:0 14px 10px;
   display:flex;justify-content:space-between;align-items:center;
 }
 .pv-info-card .l{font-size:12px;font-weight:700;color:var(--chalk2);}
@@ -172,7 +236,7 @@ section.group{
   color:var(--chalk);font-size:12px;font-weight:800;
   padding:10px 14px;border-radius:11px;text-align:center;
   box-shadow:0 6px 18px rgba(0,0,0,.25);
-  margin-bottom:18px;
+  margin:0 14px 18px;
 }
 
 /* ── モーダル（品目詳細／使用補充入力） ── */
@@ -180,7 +244,7 @@ section.group{
   background:rgba(0,0,0,.55);
   border-radius:14px;
   padding:18px 10px;
-  margin-bottom:14px;
+  margin:0 14px 14px;
 }
 .pv-modal{
   width:100%;background:var(--surface);
@@ -341,14 +405,77 @@ pre{
   <div class="preview-wrap">
     <div class="preview-label">📱 ライブプレビュー（実機の見え方）</div>
     <div id="previewRoot">
-      <div class="pv-topbar">
-        <div>
-          <div class="pv-title">在庫管理</div>
-          <div class="pv-sub">第1工場 / A棟</div>
-        </div>
-        <div class="pv-badge">発注中 2件</div>
+      <!-- ── ヘッダー ── -->
+      <div class="pv-app-header">
+        <div class="pv-logo">在庫管理 <span>TSUTSUISTOCKR</span></div>
+        <div class="pv-update">8:07 更新</div>
+      </div>
+      <div class="pv-menu-bar">
+        <div class="pv-menu-toggle">メニュー <span>▾</span></div>
+        <div class="pv-menu-title">在庫一覧</div>
+        <div class="pv-menu-icons">🔍 📊 ⬚</div>
       </div>
 
+      <!-- ── 統計サマリー ── -->
+      <div class="pv-summary-grid">
+        <div class="pv-sum-card active-all">
+          <div class="pv-sum-num chalk">122</div>
+          <div class="pv-sum-lbl">品目数</div>
+        </div>
+        <div class="pv-sum-card">
+          <div class="pv-sum-num blue">0</div>
+          <div class="pv-sum-lbl">手配状況</div>
+        </div>
+        <div class="pv-sum-card">
+          <div class="pv-sum-num red">6</div>
+          <div class="pv-sum-lbl">要補充</div>
+        </div>
+      </div>
+
+      <!-- ── カテゴリタブ ── -->
+      <div class="pv-cat-tabs">
+        <div class="pv-cat-tab active">すべて</div>
+        <div class="pv-cat-tab">溶接3F ▶</div>
+      </div>
+
+      <div class="pv-sec">品目一覧</div>
+
+      <!-- ── 品目リスト ── -->
+      <div class="pv-list-card">
+        <div class="pv-list-icon">📦</div>
+        <div class="pv-list-body">
+          <div class="pv-list-name">6A (1/8)ストレートソケット（SUS）</div>
+          <div class="pv-list-std">最終補充日 2026/06/06</div>
+        </div>
+        <div class="pv-list-right">
+          <div class="pv-list-stock">607</div>
+          <div class="pv-list-min">標準40:最低10</div>
+        </div>
+      </div>
+      <div class="pv-list-card warn">
+        <div class="pv-list-icon">📦</div>
+        <div class="pv-list-body">
+          <div class="pv-list-name">6A (1/8)ハーフ ストレートソケット（SUS）</div>
+          <div class="pv-list-std">最終補充日 2026/06/09</div>
+        </div>
+        <div class="pv-list-right">
+          <div class="pv-list-stock">10</div>
+          <div class="pv-list-min">標準30:最低10</div>
+        </div>
+      </div>
+      <div class="pv-list-card">
+        <div class="pv-list-icon">📦</div>
+        <div class="pv-list-body">
+          <div class="pv-list-name">6A (1/8)テーパーソケット（SUS）</div>
+          <div class="pv-list-std">最終補充日 2026/06/13</div>
+        </div>
+        <div class="pv-list-right">
+          <div class="pv-list-stock">13</div>
+          <div class="pv-list-min">標準40:最低12</div>
+        </div>
+      </div>
+
+      <!-- ── 品目カード(使用/補充ボタン付き) ── -->
       <div class="pv-card">
         <div class="pv-card-top">
           <div>
@@ -457,6 +584,7 @@ pre{
           <button class="pv-cancel-btn">キャンセル</button>
         </div>
       </div>
+      <div style="height:6px"></div>
     </div>
   </div>
 
