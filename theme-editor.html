@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>テーマエディタ - TSUTSUISTOCKR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'M PLUS 1',sans-serif;
+  background:#15151a;
+  color:#eceae6;
+  min-height:100vh;
+  padding-bottom:60px;
+}
+
+/* ───── エディタ自体のクローム(プレビューとは独立配色) ───── */
+:root{
+  --ed-bg:#15151a;
+  --ed-panel:#1f2026;
+  --ed-panel2:#262830;
+  --ed-line:rgba(255,255,255,0.08);
+  --ed-text:#eceae6;
+  --ed-sub:#8c8a96;
+  --ed-accent:#ff8a1f;
+  --ed-accent-lt:rgba(255,138,31,0.16);
+  --ed-good:#5ecb7a;
+}
+
+header{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(180deg,#1c1d23,#15151a 90%);
+  border-bottom:1px solid var(--ed-line);
+  padding:14px 16px 12px;
+}
+.title-row{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;}
+.title-row h1{font-size:17px;font-weight:900;margin:0;letter-spacing:.02em;}
+.title-row .tag{font-size:10px;font-weight:700;color:var(--ed-accent);background:var(--ed-accent-lt);padding:2px 7px;border-radius:20px;letter-spacing:.05em;}
+
+.preset-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+.preset-row::-webkit-scrollbar{display:none;}
+.preset-chip{
+  flex:0 0 auto;
+  font-size:12px;font-weight:700;
+  padding:7px 13px;border-radius:20px;
+  background:var(--ed-panel2);
+  border:1.5px solid var(--ed-line);
+  color:var(--ed-sub);
+  white-space:nowrap;cursor:pointer;
+  transition:.15s;
+}
+.preset-chip.active{
+  background:var(--ed-accent);
+  border-color:var(--ed-accent);
+  color:#1a1106;
+}
+
+main{padding:14px 16px 0;max-width:720px;margin:0 auto;}
+
+.name-card{
+  background:var(--ed-panel);
+  border:1px solid var(--ed-line);
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:14px;
+  display:flex;gap:10px;flex-wrap:wrap;
+}
+.name-card .f{flex:1;min-width:130px;}
+.name-card label{display:block;font-size:11px;color:var(--ed-sub);font-weight:700;margin-bottom:5px;letter-spacing:.04em;}
+.name-card input[type=text]{
+  width:100%;background:var(--ed-panel2);border:1.5px solid var(--ed-line);
+  border-radius:9px;padding:9px 10px;color:var(--ed-text);font-family:inherit;
+  font-size:14px;font-weight:700;
+}
+.name-card input[type=text]:focus{outline:none;border-color:var(--ed-accent);}
+
+section.group{
+  background:var(--ed-panel);
+  border:1px solid var(--ed-line);
+  border-radius:14px;
+  margin-bottom:14px;
+  overflow:hidden;
+}
+.group-head{
+  padding:12px 14px 10px;
+  font-size:12px;font-weight:900;color:var(--ed-sub);
+  letter-spacing:.08em;
+  border-bottom:1px solid var(--ed-line);
+}
+.swatch-list{padding:6px 10px 10px;}
+.swatch-row{
+  display:flex;align-items:center;gap:12px;
+  padding:9px 4px;
+  border-bottom:1px solid var(--ed-line);
+}
+.swatch-row:last-child{border-bottom:none;}
+.swatch-row .lbl{flex:1;font-size:13px;font-weight:700;}
+.swatch-row .lbl small{display:block;font-size:10px;color:var(--ed-sub);font-weight:500;margin-top:1px;}
+.color-pick{
+  position:relative;width:38px;height:38px;border-radius:10px;
+  border:2px solid var(--ed-line);overflow:hidden;flex:0 0 auto;cursor:pointer;
+}
+.color-pick input[type=color]{
+  position:absolute;top:-6px;left:-6px;width:54px;height:54px;border:none;cursor:pointer;background:none;
+}
+.hex-input{
+  width:84px;background:var(--ed-panel2);border:1.5px solid var(--ed-line);
+  border-radius:8px;padding:7px 8px;color:var(--ed-text);font-family:'JetBrains Mono',monospace;
+  font-size:12px;font-weight:600;text-transform:uppercase;
+}
+.hex-input:focus{outline:none;border-color:var(--ed-accent);}
+.alpha-wrap{display:flex;align-items:center;gap:6px;width:84px;}
+.alpha-wrap input[type=range]{flex:1;accent-color:var(--ed-accent);}
+.alpha-wrap span{font-size:11px;color:var(--ed-sub);width:30px;text-align:right;font-family:'JetBrains Mono',monospace;}
+
+/* ───── プレビュー(ここだけ実際のテーマ変数が適用される) ───── */
+.preview-wrap{
+  border-radius:16px;overflow:hidden;margin-bottom:14px;
+  border:1px solid var(--ed-line);
+}
+.preview-label{
+  background:var(--ed-panel2);padding:9px 14px;font-size:11px;font-weight:900;
+  color:var(--ed-sub);letter-spacing:.08em;border-bottom:1px solid var(--ed-line);
+}
+#previewRoot{
+  padding:16px;
+  background:var(--bg);
+  font-family:'M PLUS 1',sans-serif;
+  transition:background .15s;
+}
+.pv-topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:14px;
+}
+.pv-topbar .pv-title{font-size:15px;font-weight:900;color:var(--chalk);}
+.pv-topbar .pv-sub{font-size:11px;color:var(--chalk3);font-weight:700;margin-top:1px;}
+.pv-badge{
+  font-size:10px;font-weight:900;padding:4px 9px;border-radius:20px;
+  background:var(--yellow-lt);color:var(--yellow);letter-spacing:.03em;
+}
+.pv-card{
+  background:var(--card);border:1.5px solid var(--border);
+  border-radius:14px;padding:13px 14px;margin-bottom:10px;
+}
+.pv-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.pv-card-name{font-size:14px;font-weight:900;color:var(--chalk);}
+.pv-card-cat{font-size:10px;color:var(--chalk3);font-weight:700;margin-top:2px;}
+.pv-stock{font-size:20px;font-weight:900;font-family:'JetBrains Mono',monospace;}
+.pv-stock.ok{color:var(--green);}
+.pv-stock.warn{color:var(--yellow);}
+.pv-stock.danger{color:var(--red);}
+.pv-stock-unit{font-size:11px;font-weight:700;color:var(--chalk3);}
+.pv-btn-row{display:flex;gap:8px;margin-top:10px;}
+.pv-btn{
+  flex:1;text-align:center;padding:9px 0;border-radius:10px;
+  font-size:12px;font-weight:900;letter-spacing:.02em;
+}
+.pv-btn.use{background:var(--red-lt);color:var(--red);}
+.pv-btn.restock{background:var(--green-lt);color:var(--green);}
+.pv-info-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:11px 13px;margin-bottom:10px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.pv-info-card .l{font-size:12px;font-weight:700;color:var(--chalk2);}
+.pv-info-card .v{font-size:13px;font-weight:900;color:var(--blue);}
+.pv-toast{
+  background:var(--bg2);border:1.5px solid var(--green);
+  color:var(--chalk);font-size:12px;font-weight:800;
+  padding:10px 14px;border-radius:11px;text-align:center;
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
+  margin-bottom:18px;
+}
+
+/* ── モーダル（品目詳細／使用補充入力） ── */
+.pv-overlay{
+  background:rgba(0,0,0,.55);
+  border-radius:14px;
+  padding:18px 10px;
+  margin-bottom:14px;
+}
+.pv-modal{
+  width:100%;background:var(--surface);
+  border-radius:16px;padding:16px 14px 20px;
+  border:2.5px solid var(--yellow);
+}
+.pv-modal-handle{
+  width:34px;height:4px;
+  background:var(--chalk3);opacity:.5;
+  margin:0 auto 14px;border-radius:3px;
+}
+.pv-detail-head{display:flex;align-items:center;gap:11px;margin-bottom:14px;}
+.pv-detail-icon{
+  width:48px;height:48px;border-radius:11px;
+  background:var(--blue-lt);border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
+}
+.pv-detail-name{font-size:15px;font-weight:900;color:var(--chalk);line-height:1.3;}
+.pv-detail-sub{font-size:11px;color:var(--chalk3);margin-top:3px;font-weight:600;}
+.pv-stock-box{
+  text-align:center;padding:14px;background:var(--blue-lt);
+  border-radius:13px;margin-bottom:12px;border:1.5px solid rgba(122,184,232,.35);
+}
+.pv-stock-big{font-size:38px;font-weight:900;line-height:1;color:var(--blue);}
+.pv-stock-lbl{font-size:11px;color:var(--chalk3);margin-top:5px;font-weight:700;}
+.pv-action-row{display:grid;grid-template-columns:1fr .55fr 1fr;gap:7px;margin-bottom:9px;}
+.pv-action-btn{
+  border-radius:12px;padding:13px 4px;font-family:inherit;
+  font-size:12px;font-weight:900;border:2px solid;cursor:default;
+  letter-spacing:.02em;line-height:1.7;
+}
+.pv-action-btn.use{background:var(--green-lt);border-color:var(--green);color:var(--green);}
+.pv-action-btn.stock{background:var(--yellow-lt);border-color:var(--yellow);color:var(--yellow);}
+.pv-action-btn.correct{background:rgba(223,147,32,.15);border-color:#df9320;color:#df9320;}
+.pv-order-btn{
+  width:100%;padding:11px;border-radius:11px;margin-bottom:8px;
+  background:var(--blue-lt);border:1.5px solid var(--blue);color:var(--blue);
+  font-family:inherit;font-size:12px;font-weight:900;letter-spacing:.02em;cursor:default;
+}
+.pv-cancel-btn{
+  width:100%;padding:11px;border-radius:11px;
+  background:transparent;border:1.5px solid var(--border);color:var(--chalk2);
+  font-family:inherit;font-size:12px;font-weight:700;cursor:default;
+}
+.pv-qty-header{font-size:15px;font-weight:900;color:var(--yellow);margin-bottom:12px;text-align:center;}
+.pv-op-card{
+  background:var(--card);border-radius:12px;padding:11px 13px;
+  border:1.5px solid var(--border);margin-bottom:11px;
+}
+.pv-op-name{font-size:13px;font-weight:700;color:var(--chalk);}
+.pv-qty-section{
+  background:var(--card);border-radius:12px;padding:14px;
+  border:1.5px solid var(--border);margin-bottom:12px;text-align:center;
+}
+.pv-qty-label{font-size:11px;color:var(--chalk2);font-weight:900;margin-bottom:11px;letter-spacing:.06em;}
+.pv-qty-row{display:flex;justify-content:center;align-items:center;gap:14px;}
+.pv-qty-btn{
+  width:38px;height:38px;border-radius:50%;border:1.5px solid var(--border);
+  background:var(--surface);font-size:20px;font-weight:900;color:var(--yellow);
+  display:flex;align-items:center;justify-content:center;cursor:default;
+}
+.pv-qty-val{font-size:18px;font-weight:900;color:var(--chalk);min-width:36px;}
+.pv-field-sm{margin-bottom:10px;}
+.pv-field-sm label{font-size:10.5px;font-weight:900;color:var(--chalk3);display:block;margin-bottom:5px;letter-spacing:.04em;}
+.pv-registered{color:var(--green);font-size:10.5px;font-weight:900;}
+.pv-field-sm input{
+  width:100%;background:var(--surface);border:1.5px solid var(--border);
+  border-radius:9px;padding:9px 11px;color:var(--chalk);font-size:13px;
+  font-family:inherit;font-weight:500;
+}
+.pv-confirm-btn{
+  width:100%;padding:13px;border-radius:11px;margin-top:4px;
+  border:none;font-family:inherit;font-size:14px;font-weight:900;cursor:default;
+}
+.pv-confirm-btn.use{background:var(--green);color:var(--bg);}
+.pv-confirm-btn.stock{background:var(--yellow);color:var(--bg);}
+
+/* ───── エクスポート ───── */
+.export-card{
+  background:var(--ed-panel);border:1px solid var(--ed-line);
+  border-radius:14px;padding:14px;margin-bottom:20px;
+}
+.export-card h3{font-size:12px;font-weight:900;color:var(--ed-sub);letter-spacing:.08em;margin:0 0 10px;}
+pre{
+  background:#0e0e12;border:1px solid var(--ed-line);border-radius:10px;
+  padding:12px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.6;
+  color:#c9e6c4;overflow-x:auto;margin:0 0 10px;white-space:pre;
+}
+.btn-row{display:flex;gap:8px;}
+.btn{
+  flex:1;padding:11px 0;border-radius:10px;border:none;
+  font-family:inherit;font-size:13px;font-weight:900;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:.12s;
+}
+.btn.primary{background:var(--ed-accent);color:#1a1106;}
+.btn.primary:active{transform:scale(.97);}
+.btn.ghost{background:var(--ed-panel2);color:var(--ed-text);border:1.5px solid var(--ed-line);}
+.btn.ghost:active{transform:scale(.97);}
+.toast-fab{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--ed-good);color:#0d2310;font-size:13px;font-weight:900;
+  padding:10px 20px;border-radius:30px;opacity:0;pointer-events:none;
+  transition:.25s;box-shadow:0 8px 20px rgba(0,0,0,.3);z-index:99;
+}
+.toast-fab.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.option-line{
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#c9e6c4;
+  background:#0e0e12;border:1px solid var(--ed-line);border-radius:10px;
+  padding:10px 12px;margin-bottom:10px;word-break:break-all;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-row">
+    <h1>🎨 テーマエディタ</h1>
+    <span class="tag">TSUTSUISTOCKR</span>
+  </div>
+  <div class="preset-row" id="presetRow"></div>
+</header>
+
+<main>
+
+  <div class="name-card">
+    <div class="f">
+      <label>テーマID（半角英数）</label>
+      <input type="text" id="themeId" value="default" autocomplete="off">
+    </div>
+    <div class="f">
+      <label>表示名（絵文字＋名前）</label>
+      <input type="text" id="themeLabel" value="🎨 デフォルト" autocomplete="off">
+    </div>
+  </div>
+
+  <section class="group">
+    <div class="group-head">背景・面の色</div>
+    <div class="swatch-list" id="groupBase"></div>
+  </section>
+
+  <section class="group">
+    <div class="group-head">枠線</div>
+    <div class="swatch-list" id="groupBorder"></div>
+  </section>
+
+  <section class="group">
+    <div class="group-head">文字色</div>
+    <div class="swatch-list" id="groupText"></div>
+  </section>
+
+  <section class="group">
+    <div class="group-head">アクセント色（用途別）</div>
+    <div class="swatch-list" id="groupAccent"></div>
+  </section>
+
+  <div class="preview-wrap">
+    <div class="preview-label">📱 ライブプレビュー（実機の見え方）</div>
+    <div id="previewRoot">
+      <div class="pv-topbar">
+        <div>
+          <div class="pv-title">在庫管理</div>
+          <div class="pv-sub">第1工場 / A棟</div>
+        </div>
+        <div class="pv-badge">発注中 2件</div>
+      </div>
+
+      <div class="pv-card">
+        <div class="pv-card-top">
+          <div>
+            <div class="pv-card-name">六角ボルト M8×25</div>
+            <div class="pv-card-cat">ボルト・ナット類</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pv-stock ok">128<span class="pv-stock-unit">本</span></div>
+          </div>
+        </div>
+        <div class="pv-btn-row">
+          <div class="pv-btn use">使用</div>
+          <div class="pv-btn restock">補充</div>
+        </div>
+      </div>
+
+      <div class="pv-card">
+        <div class="pv-card-top">
+          <div>
+            <div class="pv-card-name">エア配管チューブ φ6</div>
+            <div class="pv-card-cat">配管材</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pv-stock warn">8<span class="pv-stock-unit">m</span></div>
+          </div>
+        </div>
+        <div class="pv-btn-row">
+          <div class="pv-btn use">使用</div>
+          <div class="pv-btn restock">補充</div>
+        </div>
+      </div>
+
+      <div class="pv-card">
+        <div class="pv-card-top">
+          <div>
+            <div class="pv-card-name">溶接ワイヤー 1.2mm</div>
+            <div class="pv-card-cat">溶接設備</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pv-stock danger">0<span class="pv-stock-unit">巻</span></div>
+          </div>
+        </div>
+        <div class="pv-btn-row">
+          <div class="pv-btn use">使用</div>
+          <div class="pv-btn restock">補充</div>
+        </div>
+      </div>
+
+      <div class="pv-info-card">
+        <div class="l">最終補充日</div>
+        <div class="v">06/15</div>
+      </div>
+
+      <div class="pv-toast">✓ 在庫を更新しました</div>
+
+      <!-- ── 品目詳細モーダル ── -->
+      <div class="pv-overlay">
+        <div class="pv-modal">
+          <div class="pv-modal-handle"></div>
+          <div class="pv-detail-head">
+            <div class="pv-detail-icon">📦</div>
+            <div>
+              <div class="pv-detail-name">8A (1/4)ストレートソケット（SS）</div>
+              <div class="pv-detail-sub">ストレートソケットSS　ID: ITM109</div>
+            </div>
+          </div>
+          <div class="pv-stock-box">
+            <div class="pv-stock-big">5</div>
+            <div class="pv-stock-lbl">現在庫（最低在庫: 0）</div>
+          </div>
+          <div class="pv-action-row">
+            <button class="pv-action-btn use">📤<br>使　用</button>
+            <button class="pv-action-btn correct">↩<br>訂正</button>
+            <button class="pv-action-btn stock">📥<br>補　充</button>
+          </div>
+          <button class="pv-order-btn">📋 発注状況を設定</button>
+          <button class="pv-cancel-btn">閉じる</button>
+        </div>
+      </div>
+
+      <!-- ── 使用/補充 入力モーダル ── -->
+      <div class="pv-overlay">
+        <div class="pv-modal">
+          <div class="pv-modal-handle"></div>
+          <div class="pv-qty-header">📤 使用（出庫）</div>
+          <div class="pv-op-card">
+            <div class="pv-op-name">8A (1/4)ストレートソケット（SS）</div>
+          </div>
+          <div class="pv-qty-section">
+            <div class="pv-qty-label">数　量</div>
+            <div class="pv-qty-row">
+              <button class="pv-qty-btn">－</button>
+              <div class="pv-qty-val">1</div>
+              <button class="pv-qty-btn">＋</button>
+            </div>
+          </div>
+          <div class="pv-field-sm">
+            <label>作業者　<span class="pv-registered">✓ 登録済</span></label>
+            <input type="text" value="かわくぼ" readonly>
+          </div>
+          <div class="pv-field-sm">
+            <label>メモ（任意）</label>
+            <input type="text" placeholder="" readonly>
+          </div>
+          <button class="pv-confirm-btn use">確定（使用）</button>
+          <button class="pv-cancel-btn">キャンセル</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="export-card">
+    <h3>CSS（index.html の style 内にコピー）</h3>
+    <pre id="cssOutput"></pre>
+    <div class="btn-row" style="margin-bottom:10px;">
+      <button class="btn primary" id="copyCssBtn">📋 CSSをコピー</button>
+    </div>
+
+    <h3>Settingsのセレクターに追加する1行</h3>
+    <div class="option-line" id="optionOutput"></div>
+    <div class="btn-row">
+      <button class="btn ghost" id="copyOptionBtn">📋 この行をコピー</button>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast-fab" id="toastFab">コピーしました！</div>
+
+<script>
+// ════════════════════════════════════════
+// テーマ定義データ（プリセット）
+// ════════════════════════════════════════
+const presets = {
+  default:{label:'🎨 デフォルト',bg:'#424242',bg2:'#363636',surface:'#4e4e4e',card:'#585858',borderColor:'#ffffff',borderAlpha:18,chalk:'#ffffff',chalk2:'#e0e0d8',chalk3:'#b8b8b0',yellow:'#ffd84d',red:'#ff6b6b',green:'#5ecb7a',blue:'#6ab4f0'},
+  spring:{label:'🌸 春',bg:'#faf8f5',bg2:'#f5f1ed',surface:'#f0e8e4',card:'#ebe3de',borderColor:'#c87878',borderAlpha:15,chalk:'#5a4a48',chalk2:'#7a6a68',chalk3:'#9a8a88',yellow:'#e8b4a0',red:'#d97e7e',green:'#a8d4a0',blue:'#b8d4e8'},
+  summer:{label:'🌊 夏',bg:'#0f2c47',bg2:'#0a1f35',surface:'#14375f',card:'#1a4578',borderColor:'#64c8ff',borderAlpha:20,chalk:'#e8f4ff',chalk2:'#d0e8ff',chalk3:'#a0c8e8',yellow:'#ffdc5e',red:'#ff8a8a',green:'#5edfb0',blue:'#64d9ff'},
+  autumn:{label:'🍂 秋',bg:'#3a2424',bg2:'#2f1a1a',surface:'#50362f',card:'#6b4c42',borderColor:'#dc8c50',borderAlpha:20,chalk:'#fbe8d0',chalk2:'#f0dcc0',chalk3:'#d4b8a0',yellow:'#e8a858',red:'#d85850',green:'#a8c450',blue:'#a8b8d0'},
+  winter:{label:'❄️ 冬',bg:'#0d1b2a',bg2:'#081018',surface:'#132f4c',card:'#1b4965',borderColor:'#64b4ff',borderAlpha:20,chalk:'#e0f0ff',chalk2:'#c8e0ff',chalk3:'#90b8e8',yellow:'#ffc857',red:'#ff7b7b',green:'#5ec9b0',blue:'#00d9ff'},
+  orange:{label:'🔶 オレンジ',bg:'#2a2a2a',bg2:'#1f1f1f',surface:'#383838',card:'#464646',borderColor:'#ff8c3c',borderAlpha:20,chalk:'#ffffff',chalk2:'#e8e8e0',chalk3:'#c0c0b8',yellow:'#ffa840',red:'#ff6b6b',green:'#5ecb7a',blue:'#6ab4f0'},
+};
+
+let state = {id:'default', ...JSON.parse(JSON.stringify(presets.default))};
+
+// ════════════════════════════════════════
+// ユーティリティ
+// ════════════════════════════════════════
+function hexToRgb(hex){
+  hex = hex.replace('#','');
+  if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+  const num = parseInt(hex,16);
+  return {r:(num>>16)&255, g:(num>>8)&255, b:num&255};
+}
+function rgba(hex,alpha){
+  const {r,g,b} = hexToRgb(hex);
+  return `rgba(${r},${g},${b},${(alpha/100).toFixed(2)})`;
+}
+
+// ════════════════════════════════════════
+// スウォッチ生成
+// ════════════════════════════════════════
+const baseFields = [
+  {key:'bg', label:'背景（全体）', note:'画面全体のベースカラー'},
+  {key:'bg2', label:'背景（濃）', note:'ヘッダーなど少し濃い面'},
+  {key:'surface', label:'サーフェス', note:'情報パネルなどの面'},
+  {key:'card', label:'カード', note:'品目カードの背景'},
+];
+const textFields = [
+  {key:'chalk', label:'文字（メイン）', note:'品目名など主要テキスト'},
+  {key:'chalk2', label:'文字（サブ）', note:'補足テキスト'},
+  {key:'chalk3', label:'文字（薄め）', note:'カテゴリ名・単位など'},
+];
+const accentFields = [
+  {key:'yellow', label:'警告・発注中', note:'在庫少・発注バッジ'},
+  {key:'red', label:'使用', note:'使用ボタン・エラー'},
+  {key:'green', label:'補充・成功', note:'補充ボタン・OK表示'},
+  {key:'blue', label:'情報', note:'リンク・情報表示'},
+];
+
+function renderSwatchGroup(container, fields){
+  container.innerHTML = fields.map(f => `
+    <div class="swatch-row">
+      <div class="lbl">${f.label}<small>${f.note}</small></div>
+      <label class="color-pick">
+        <input type="color" id="c_${f.key}" value="${state[f.key]}">
+      </label>
+      <input type="text" class="hex-input" id="t_${f.key}" value="${state[f.key]}">
+    </div>
+  `).join('');
+
+  fields.forEach(f=>{
+    const c = document.getElementById('c_'+f.key);
+    const t = document.getElementById('t_'+f.key);
+    c.addEventListener('input', ()=>{ state[f.key]=c.value; t.value=c.value; sync(); });
+    t.addEventListener('change', ()=>{
+      let v = t.value.trim();
+      if(!v.startsWith('#')) v = '#'+v;
+      if(/^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/.test(v)){
+        state[f.key]=v; c.value=v; sync();
+      } else { t.value = state[f.key]; }
+    });
+  });
+}
+
+function renderBorderGroup(){
+  const el = document.getElementById('groupBorder');
+  el.innerHTML = `
+    <div class="swatch-row">
+      <div class="lbl">枠線の色<small>カード・入力欄の境界</small></div>
+      <label class="color-pick"><input type="color" id="c_borderColor" value="${state.borderColor}"></label>
+      <div class="alpha-wrap">
+        <input type="range" id="r_borderAlpha" min="0" max="60" value="${state.borderAlpha}">
+        <span id="s_borderAlpha">${state.borderAlpha}%</span>
+      </div>
+    </div>
+  `;
+  document.getElementById('c_borderColor').addEventListener('input', e=>{ state.borderColor=e.target.value; sync(); });
+  document.getElementById('r_borderAlpha').addEventListener('input', e=>{
+    state.borderAlpha = +e.target.value;
+    document.getElementById('s_borderAlpha').textContent = state.borderAlpha+'%';
+    sync();
+  });
+}
+
+// ════════════════════════════════════════
+// プリセットチップ
+// ════════════════════════════════════════
+function renderPresetChips(){
+  const row = document.getElementById('presetRow');
+  const keys = Object.keys(presets);
+  row.innerHTML = keys.map(k=>`<div class="preset-chip${k===state.id?' active':''}" data-key="${k}">${presets[k].label}</div>`).join('')
+    + `<div class="preset-chip${state.id==='custom'?' active':''}" data-key="custom">✏️ 新規</div>`;
+  row.querySelectorAll('.preset-chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      const key = chip.dataset.key;
+      if(key==='custom'){
+        state.id='custom';
+        document.getElementById('themeId').value='';
+        document.getElementById('themeLabel').value='🎨 新テーマ';
+      } else {
+        state = {id:key, ...JSON.parse(JSON.stringify(presets[key]))};
+        document.getElementById('themeId').value=key;
+        document.getElementById('themeLabel').value=presets[key].label;
+      }
+      renderAll();
+    });
+  });
+}
+
+// ════════════════════════════════════════
+// プレビュー反映
+// ════════════════════════════════════════
+function sync(){
+  const root = document.getElementById('previewRoot');
+  root.style.setProperty('--bg', state.bg);
+  root.style.setProperty('--bg2', state.bg2);
+  root.style.setProperty('--surface', state.surface);
+  root.style.setProperty('--card', state.card);
+  root.style.setProperty('--border', rgba(state.borderColor, state.borderAlpha));
+  root.style.setProperty('--chalk', state.chalk);
+  root.style.setProperty('--chalk2', state.chalk2);
+  root.style.setProperty('--chalk3', state.chalk3);
+  root.style.setProperty('--yellow', state.yellow);
+  root.style.setProperty('--yellow-lt', rgba(state.yellow,18));
+  root.style.setProperty('--red', state.red);
+  root.style.setProperty('--red-lt', rgba(state.red,18));
+  root.style.setProperty('--green', state.green);
+  root.style.setProperty('--green-lt', rgba(state.green,18));
+  root.style.setProperty('--blue', state.blue);
+  root.style.setProperty('--blue-lt', rgba(state.blue,18));
+
+  updateExport();
+}
+
+function updateExport(){
+  const id = document.getElementById('themeId').value.trim() || 'custom';
+  const label = document.getElementById('themeLabel').value.trim() || '🎨 新テーマ';
+
+  const css =
+`:root[data-theme="${id}"] {
+  --bg: ${state.bg};
+  --bg2: ${state.bg2};
+  --surface: ${state.surface};
+  --card: ${state.card};
+  --border: ${rgba(state.borderColor, state.borderAlpha)};
+  --chalk: ${state.chalk};
+  --chalk2: ${state.chalk2};
+  --chalk3: ${state.chalk3};
+  --yellow: ${state.yellow};
+  --yellow-lt: ${rgba(state.yellow,18)};
+  --red: ${state.red};
+  --red-lt: ${rgba(state.red,18)};
+  --green: ${state.green};
+  --green-lt: ${rgba(state.green,18)};
+  --blue: ${state.blue};
+  --blue-lt: ${rgba(state.blue,18)};
+}`;
+  document.getElementById('cssOutput').textContent = css;
+  document.getElementById('optionOutput').textContent = `<option value="${id}">${label}</option>`;
+}
+
+// ════════════════════════════════════════
+// コピー処理
+// ════════════════════════════════════════
+function showCopiedToast(){
+  const fab = document.getElementById('toastFab');
+  fab.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>fab.classList.remove('show'), 1600);
+}
+function copyText(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(showCopiedToast).catch(()=>fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); showCopiedToast(); }catch(e){}
+  document.body.removeChild(ta);
+}
+
+document.getElementById('copyCssBtn').addEventListener('click', ()=>{
+  copyText(document.getElementById('cssOutput').textContent);
+});
+document.getElementById('copyOptionBtn').addEventListener('click', ()=>{
+  copyText(document.getElementById('optionOutput').textContent);
+});
+document.getElementById('themeId').addEventListener('input', updateExport);
+document.getElementById('themeLabel').addEventListener('input', updateExport);
+
+// ════════════════════════════════════════
+// 初期描画
+// ════════════════════════════════════════
+function renderAll(){
+  renderPresetChips();
+  renderSwatchGroup(document.getElementById('groupBase'), baseFields);
+  renderBorderGroup();
+  renderSwatchGroup(document.getElementById('groupText'), textFields);
+  renderSwatchGroup(document.getElementById('groupAccent'), accentFields);
+  sync();
+}
+renderAll();
+</script>
+</body>
+</html>
